@@ -11,7 +11,7 @@ import { eq, isNull } from "drizzle-orm";
 import { generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
-const fs = require("fs");
+import fs from "fs";
 
 const openai = new OpenAI();
 const client = createOpenAI();
@@ -35,18 +35,54 @@ Remember, ONLY RETURN THE JSON of 20 unique categories and nothing else.
   
 MAKE SURE THERE ARE 20 CATEGORIES IN THE OUTPUT.`;
 
+const generateCollections = async () => {
+  const names = [
+    "Drawing and Sketching",
+    "Painting Supplies",
+    "Ink and Calligraphy",
+    "Craft Supplies",
+    "Printmaking and Stamping",
+    "Sculpting and Model Making",
+    "Tools and Accessories",
+    "Canvas and Surfaces",
+    "Paper and Pads",
+    "Digital Art Supplies",
+    "Framing and Display",
+    "Photography and Film",
+    "Textile and Fiber Arts",
+    "Jewelry Making",
+    "Ceramics and Pottery",
+    "Woodworking and Carving",
+    "Mosaic and Glass Art",
+    "Art Books and Educational Materials",
+    "Mixed Media and Collage Supplies",
+  ]; //copied from data.sql
+
+  const data = names.map((name) => ({
+    name,
+    slug: slugify(name, { lower: true }),
+  }));
+
+  // insert into DB, ignore conflicts to be idempotent
+  await db.insert(collections).values(data).onConflictDoNothing();
+
+  return data;
+};
+
 const getCollections = async () => {
   return await db.select().from(collections);
 };
 
 // generate 20 categories per each collection
 const generateCategories = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = [] as any;
   const c = await getCollections();
+  console.log(c.length);
 
   const promises = c.map(async (col) => {
     const { object } = await generateObject({
-      model: client.languageModel("gpt-4o-mini", { structuredOutputs: true }),
+      model: client.languageModel("gpt-5-mini"),
       schema: z.object({
         categories: z.array(z.string()),
       }),
@@ -69,20 +105,19 @@ const generateCategories = async () => {
   await db.insert(categories).values(data).onConflictDoNothing();
 };
 
-// generateCategories();
-
 const getCategories = async () => {
   return await db.select().from(categories);
 };
 
 // generate 10 subcollections per each category
 const generateSubCollections = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = [] as any;
   const c = await getCategories();
 
   const promises = c.map(async (cat) => {
     const { object } = await generateObject({
-      model: client.languageModel("gpt-4o-mini", { structuredOutputs: true }),
+      model: client.languageModel("gpt-5-mini"),
       schema: z.object({
         subcollections: z.array(z.string()),
       }),
@@ -120,8 +155,6 @@ const generateSubCollections = async () => {
   await db.insert(subcollections).values(data).onConflictDoNothing();
 };
 
-// generateSubCollections();
-
 const getSubcollections = async () => {
   // only get subcollections that have no subcategories
   const result = await db
@@ -131,13 +164,12 @@ const getSubcollections = async () => {
       subcategories,
       eq(subcollections.id, subcategories.subcollection_id),
     )
-    .where(isNull(subcategories.subcollection_id))
-    .limit(300);
-  console.log(result.length);
+    .where(isNull(subcategories.subcollection_id));
   return result;
 };
 
 const generateSubcategories = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = [] as any;
   const subcollections = (await getSubcollections()).map(
     (c) => c.subcollections,
@@ -145,7 +177,7 @@ const generateSubcategories = async () => {
 
   const promises = subcollections.map(async (subcol) => {
     const { object } = await generateObject({
-      model: client.languageModel("gpt-4o-mini", { structuredOutputs: true }),
+      model: client.languageModel("gpt-5-nano"),
       schema: z.object({
         subcategories: z.array(z.string()),
       }),
@@ -184,9 +216,6 @@ const generateSubcategories = async () => {
   await db.insert(subcategories).values(data).onConflictDoNothing();
 };
 
-// getSubcollections();
-// generateSubcategories();
-
 const productSystemMessage = `
 You are given the name of a category of products in an art supply store.
 Your task is to generate 25 unique products that belong to this category.
@@ -214,7 +243,7 @@ const generateBatchFile = async () => {
     const method = "POST";
     const url = "/v1/chat/completions";
     const body = {
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       messages: [
         { role: "system", content: productSystemMessage },
         { role: "user", content: `Category name: ${subcat.name}` },
@@ -223,6 +252,7 @@ const generateBatchFile = async () => {
 
     const line = `{"custom_id": "${custom_id}", "method": "${method}", "url": "${url}", "body": ${JSON.stringify(body)}}`;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fs.appendFile("scripts/req.jsonl", line + "\n", (err: any) => {
       if (err) {
         console.error(err);
@@ -268,6 +298,7 @@ const downloadBatch = async () => {
   const fileResponse = await openai.files.content("");
   const fileContents = await fileResponse.text();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fs.appendFile("scripts/out.jsonl", fileContents, (err: any) => {
     if (err) {
       console.error(err);
@@ -278,3 +309,19 @@ const downloadBatch = async () => {
 };
 
 // downloadBatch();
+
+// Remove the previous ad-hoc top-level calls and orchestrate execution so inserts happen in order.
+// Replace direct calls with a single orchestrator
+async function main() {
+  try {
+    // await generateCollections();
+    // await generateCategories();
+    // await generateSubCollections();
+    await generateSubcategories();
+  } catch (err) {
+    console.error("Error in generation pipeline:", err);
+    process.exitCode = 1;
+  }
+}
+
+main();

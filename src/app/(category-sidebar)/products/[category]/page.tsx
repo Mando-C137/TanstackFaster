@@ -39,6 +39,7 @@ export default async function Page(props: {
               {subcollection.name}
             </h2>
             <div className="flex flex-row flex-wrap gap-2">
+              {subcollection.subcategories.length}
               {subcollection.subcategories.map(
                 (subcategory, subcategoryIndex) => (
                   <Link

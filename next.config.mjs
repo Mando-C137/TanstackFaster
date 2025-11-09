@@ -1,15 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactCompiler: true,
+  cacheComponents: true,
   experimental: {
-    ppr: true,
     inlineCss: true,
-    reactCompiler: true,
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   images: {
     minimumCacheTTL: 31536000,

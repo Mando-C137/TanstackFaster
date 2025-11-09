@@ -3,23 +3,21 @@ import {
   index,
   integer,
   numeric,
-  pgTable,
-  serial,
+  sqliteTable,
   text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
-export const collections = pgTable("collections", {
-  id: serial("id").primaryKey(),
+
+export const collections = sqliteTable("collections", {
+  id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
   name: text("name").notNull(),
-  slug: text("slug").notNull(),
+  slug: text("slug").notNull().unique(),
 });
 
 export type Collection = typeof collections.$inferSelect;
 
-export const categories = pgTable(
+export const categories = sqliteTable(
   "categories",
   {
     slug: text("slug").notNull().primaryKey(),
@@ -38,10 +36,10 @@ export const categories = pgTable(
 
 export type Category = typeof categories.$inferSelect;
 
-export const subcollections = pgTable(
+export const subcollections = sqliteTable(
   "subcollections",
   {
-    id: serial("id").primaryKey(),
+    id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
     name: text("name").notNull(),
     category_slug: text("category_slug")
       .notNull()
@@ -56,7 +54,7 @@ export const subcollections = pgTable(
 
 export type Subcollection = typeof subcollections.$inferSelect;
 
-export const subcategories = pgTable(
+export const subcategories = sqliteTable(
   "subcategories",
   {
     slug: text("slug").notNull().primaryKey(),
@@ -75,7 +73,7 @@ export const subcategories = pgTable(
 
 export type Subcategory = typeof subcategories.$inferSelect;
 
-export const products = pgTable(
+export const products = sqliteTable(
   "products",
   {
     slug: text("slug").notNull().primaryKey(),
@@ -88,13 +86,14 @@ export const products = pgTable(
     image_url: text("image_url"),
   },
   (table) => ({
-    nameSearchIndex: index("name_search_index").using(
-      "gin",
-      sql`to_tsvector('english', ${table.name})`,
-    ),
-    nameTrgmIndex: index("name_trgm_index")
-      .using("gin", sql`${table.name} gin_trgm_ops`)
-      .concurrently(),
+    nameIndex: index("products_name_index").on(table.name),
+    // nameSearchIndex: index("name_search_index").using(
+    //   "gin",
+    //   sql`to_tsvector('english', ${table.name})`,
+    // ),
+    // nameTrgmIndex: index("name_trgm_index")
+    //   .using("gin", sql`${table.name} gin_trgm_ops`)
+    //   .concurrently(),
     subcategorySlugIdx: index("products_subcategory_slug_idx").on(
       table.subcategory_slug,
     ),
@@ -144,12 +143,12 @@ export const productsRelations = relations(products, ({ one }) => ({
   }),
 }));
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: varchar("username", { length: 100 }).notNull().unique(),
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }).notNull(),
+  username: text("username", { length: 100 }).notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export type User = typeof users.$inferSelect;

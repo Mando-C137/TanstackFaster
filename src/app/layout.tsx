@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { MenuIcon } from "lucide-react";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { Cart } from "@/components/cart";
 import { AuthServer } from "./auth.server";
 import { Link } from "@/components/ui/link";
@@ -21,13 +21,20 @@ export const metadata: Metadata = {
   description: "A performant site built with Next.js",
 };
 
-export const revalidate = 86400; // One day
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  return (
+    <CachedLayout authComponent={<AuthServer />} cartComponent={<Cart />}>{children}</CachedLayout>
+  );
+
+}
+
+async function CachedLayout({ children, authComponent, cartComponent }: { children: React.ReactNode, authComponent: React.ReactNode, cartComponent: React.ReactNode }) {
+  "use cache";
   return (
     <html lang="en" className="h-full">
       <body
@@ -47,7 +54,7 @@ export default async function RootLayout({
                     </button>
                   }
                 >
-                  <AuthServer />
+                  {authComponent}
                 </Suspense>
               </div>
               <div className="flex w-full flex-col items-start justify-center sm:w-auto sm:flex-row sm:items-center sm:gap-2">
@@ -72,7 +79,7 @@ export default async function RootLayout({
                         ORDER
                       </Link>
                       <Suspense>
-                        <Cart />
+                        {cartComponent}
                       </Suspense>
                     </div>
                     <Link
@@ -129,5 +136,6 @@ export default async function RootLayout({
         <SpeedInsights />
       </body>
     </html>
-  );
+
+  )
 }

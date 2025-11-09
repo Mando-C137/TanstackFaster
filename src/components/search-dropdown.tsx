@@ -28,6 +28,7 @@ export function SearchDropdownComponent() {
   // react query at home:
   useEffect(() => {
     if (searchTerm.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilteredItems([]);
     } else {
       setIsLoading(true);
@@ -49,6 +50,7 @@ export function SearchDropdownComponent() {
   useEffect(() => {
     if (!params.product) {
       const subcategory = params.subcategory;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchTerm(
         typeof subcategory === "string" ? subcategory.replaceAll("-", " ") : "",
       );

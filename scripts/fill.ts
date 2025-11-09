@@ -3,8 +3,8 @@ import { products, subcategories } from "../src/db/schema";
 import { db } from "../src/db";
 import { eq, isNull } from "drizzle-orm";
 
-const readline = require("readline");
-const fs = require("fs");
+import readline from "readline";
+import fs from "fs";
 
 const getEmptySubcategories = async () => {
   const subcategoriesWithoutProducts = await db
@@ -16,6 +16,7 @@ const getEmptySubcategories = async () => {
   return subcategoriesWithoutProducts.map((s) => s.subcategories.slug);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getRandomObjects(arr: any[], count: number) {
   const result = [];
   const takenIndices = new Set();
@@ -39,6 +40,7 @@ const getBody = async () => {
     input: fileStream,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const body = [] as any[];
   rl.on("line", (line: string) => {
     try {
@@ -65,6 +67,7 @@ const getBody = async () => {
       body.push(...productsToAdd);
     } catch (err) {
       console.error("Error parsing JSON:", err);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       fs.appendFile("scripts/errors.txt", line + "\n", (err: any) => {
         if (err) {
           console.error(err);

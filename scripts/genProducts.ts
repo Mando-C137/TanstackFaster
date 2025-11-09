@@ -9,9 +9,11 @@ import {
   subcollections,
 } from "../src/db/schema";
 import { eq, sql, lt } from "drizzle-orm";
-import OpenAI from "openai";
+import { openai } from '@ai-sdk/openai';
+
 import { z } from "zod";
 import slugify from "slugify";
+import { generateText } from "ai";
 
 const productValidator = z.object({
   products: z.array(
@@ -31,7 +33,6 @@ const categoryValidator = z.object({
   ),
 });
 
-const openai = new OpenAI();
 
 const makeProductPrompt = (categoryName: string) => `
   You are given the name of a product category for products in an art supply store.
@@ -92,7 +93,7 @@ const makeCategoryPrompt = (categoryName: string) => `
 
   OUTPUT:`;
 
-const main = Effect.gen(function* () {
+const mainEffect = Effect.gen(function* () {
   // find subcollections with less than 5 subcategories
   // const subcollectionsWithLessThan5Subcategories = yield* Effect.tryPromise(
   //   () =>
@@ -123,7 +124,7 @@ const main = Effect.gen(function* () {
   //       console.log("starting", coll.subcollectionName);
   //       const res = yield* Effect.tryPromise(() =>
   //         openai.chat.completions.create({
-  //           model: "gpt-3.5-turbo",
+  //           model: "gpt-5-nano",
   //           messages: [
   //             {
   //               role: "user",
@@ -187,8 +188,8 @@ const main = Effect.gen(function* () {
         );
         console.log("starting", cat.subcategoryName);
         const res = yield* Effect.tryPromise(() =>
-          openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+          generateText({
+            model: openai("gpt-5-nano"),
             messages: [
               {
                 role: "user",
@@ -197,7 +198,7 @@ const main = Effect.gen(function* () {
             ],
           }),
         );
-        const json = res.choices[0].message.content;
+        const json = res.text
         if (!json) {
           return yield* Effect.fail("no json");
         }
@@ -228,7 +229,12 @@ const main = Effect.gen(function* () {
   );
 });
 
-const exit = await Effect.runPromiseExit(
-  main.pipe(Effect.retry({ schedule: Schedule.spaced("1 seconds") })),
-);
-console.log(exit.toString());
+
+async function main() {
+  const exit = await Effect.runPromiseExit(
+    mainEffect.pipe(Effect.retry({ schedule: Schedule.spaced("1 seconds") })),
+  );
+  console.log(exit.toString());
+
+}
+main()

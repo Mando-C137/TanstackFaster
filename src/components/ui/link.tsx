@@ -54,11 +54,11 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
             router.prefetch(String(props.href));
             await sleep(0);
 
-            if (!imageCache.has(String(props.href))) {
-              void prefetchImages(String(props.href)).then((images) => {
-                imageCache.set(String(props.href), images);
-              }, console.error);
-            }
+            // if (!imageCache.has(String(props.href))) {
+            //   void prefetchImages(String(props.href)).then((images) => {
+            //     imageCache.set(String(props.href), images);
+            //   }, console.error);
+            // }
 
             observer.unobserve(entry.target);
           }, 300);
