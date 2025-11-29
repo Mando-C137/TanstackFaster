@@ -1,15 +1,13 @@
-"use client";
-
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Product } from "../db/schema";
 import { Link } from "@/components/ui/link";
-import { useParams, useRouter } from "next/navigation";
-import { ProductSearchResult } from "@/app/api/search/route";
+import { ProductSearchResult } from "@/app/api/search";
+import { useParams, useRouter } from "@tanstack/react-router";
 
 type SearchResult = Product & { href: string };
 
@@ -46,7 +44,7 @@ export function SearchDropdownComponent() {
     }
   }, [searchTerm, inputRef]);
 
-  const params = useParams();
+  const params = useParams({ strict: false });
   useEffect(() => {
     if (!params.product) {
       const subcategory = params.subcategory;
@@ -67,7 +65,7 @@ export function SearchDropdownComponent() {
         prevIndex > 0 ? prevIndex - 1 : filteredItems.length - 1,
       );
     } else if (e.key === "Enter" && highlightedIndex >= 0) {
-      router.push(filteredItems[highlightedIndex].href);
+      router.navigate({ href: filteredItems[highlightedIndex].href });
       setSearchTerm(filteredItems[highlightedIndex].name);
       setIsOpen(false);
       inputRef.current?.blur();
@@ -113,7 +111,7 @@ export function SearchDropdownComponent() {
           />
           <X
             className={cn(
-              "absolute right-7 top-2 h-5 w-5 text-muted-foreground",
+              "text-muted-foreground absolute top-2 right-7 h-5 w-5",
               {
                 hidden: !isOpen,
               },
@@ -129,7 +127,7 @@ export function SearchDropdownComponent() {
             <ScrollArea className="h-[300px]">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, index) => (
-                  <Link href={item.href} key={item.slug} prefetch={true}>
+                  <Link to={item.href} key={item.slug} preload={"viewport"}>
                     <div
                       className={cn("flex cursor-pointer items-center p-2", {
                         "bg-gray-100": index === highlightedIndex,
@@ -141,7 +139,7 @@ export function SearchDropdownComponent() {
                         inputRef.current?.blur();
                       }}
                     >
-                      <Image
+                      <img
                         loading="eager"
                         decoding="sync"
                         src={item.image_url ?? "/placeholder.svg"}
@@ -149,7 +147,7 @@ export function SearchDropdownComponent() {
                         className="h-10 w-10 pr-2"
                         height={40}
                         width={40}
-                        quality={65}
+                        // quality={65}
                       />
                       <span className="text-sm">{item.name}</span>
                     </div>

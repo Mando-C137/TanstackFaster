@@ -1,9 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@import "@fontsource/geist-sans";
+@import "@fontsource-variable/geist-mono";
 
 body {
   font-family: Arial, sans-serif;
+}
+
+@theme inline {
+  --font-geist-sans: "Geist Sans", sans-serif;
+  --font-geist-mono: "Geist Mono Variable", monospace;
 }
 
 @layer utilities {

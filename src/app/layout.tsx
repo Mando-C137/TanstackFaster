@@ -4,7 +4,7 @@ import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { MenuIcon } from "lucide-react";
 import React, { Suspense } from "react";
 import { Cart } from "@/components/cart";
-import { AuthServer } from "./auth.server";
+import { AuthServer } from "./-auth.client";
 import { Link } from "@/components/ui/link";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "sonner";
@@ -21,29 +21,37 @@ export const metadata: Metadata = {
   description: "A performant site built with Next.js",
 };
 
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <CachedLayout authComponent={<AuthServer />} cartComponent={<Cart />}>{children}</CachedLayout>
+    <CachedLayout authComponent={<AuthServer />} cartComponent={<Cart />}>
+      {children}
+    </CachedLayout>
   );
-
 }
 
-async function CachedLayout({ children, authComponent, cartComponent }: { children: React.ReactNode, authComponent: React.ReactNode, cartComponent: React.ReactNode }) {
+async function CachedLayout({
+  children,
+  authComponent,
+  cartComponent,
+}: {
+  children: React.ReactNode;
+  authComponent: React.ReactNode;
+  cartComponent: React.ReactNode;
+}) {
   "use cache";
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${GeistSans.variable} ${GeistMono.variable} flex flex-col overflow-y-auto overflow-x-hidden antialiased`}
+        className={`${GeistSans.variable} ${GeistMono.variable} flex flex-col overflow-x-hidden overflow-y-auto antialiased`}
       >
         <div>
-          <header className="fixed top-0 z-10 flex h-[90px] w-[100vw] flex-grow items-center justify-between border-b-2 border-accent2 bg-background p-2 pb-[4px] pt-2 sm:h-[70px] sm:flex-row sm:gap-4 sm:p-4 sm:pb-[4px] sm:pt-0">
+          <header className="border-accent2 bg-background fixed top-0 z-10 flex h-[90px] w-[100vw] flex-grow items-center justify-between border-b-2 p-2 pt-2 pb-[4px] sm:h-[70px] sm:flex-row sm:gap-4 sm:p-4 sm:pt-0 sm:pb-[4px]">
             <div className="flex flex-grow flex-col">
-              <div className="absolute right-2 top-2 flex justify-end pt-2 font-sans text-sm hover:underline sm:relative sm:right-0 sm:top-0">
+              <div className="absolute top-2 right-2 flex justify-end pt-2 font-sans text-sm hover:underline sm:relative sm:top-0 sm:right-0">
                 <Suspense
                   fallback={
                     <button className="flex flex-row items-center gap-1">
@@ -61,7 +69,7 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
                 <Link
                   prefetch={true}
                   href="/"
-                  className="text-4xl font-bold text-accent1"
+                  className="text-accent1 text-4xl font-bold"
                 >
                   NextFaster
                 </Link>
@@ -74,18 +82,16 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
                       <Link
                         prefetch={true}
                         href="/order"
-                        className="text-lg text-accent1 hover:underline"
+                        className="text-accent1 text-lg hover:underline"
                       >
                         ORDER
                       </Link>
-                      <Suspense>
-                        {cartComponent}
-                      </Suspense>
+                      <Suspense>{cartComponent}</Suspense>
                     </div>
                     <Link
                       prefetch={true}
                       href="/order-history"
-                      className="hidden text-lg text-accent1 hover:underline md:block"
+                      className="text-accent1 hidden text-lg hover:underline md:block"
                     >
                       ORDER HISTORY
                     </Link>
@@ -93,7 +99,7 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
                       prefetch={true}
                       href="/order-history"
                       aria-label="Order History"
-                      className="block text-lg text-accent1 hover:underline md:hidden"
+                      className="text-accent1 block text-lg hover:underline md:hidden"
                     >
                       <MenuIcon />
                     </Link>
@@ -104,7 +110,7 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
           </header>
           <div className="pt-[85px] sm:pt-[70px]">{children}</div>
         </div>
-        <footer className="fixed bottom-0 flex h-12 w-screen flex-col items-center justify-between space-y-2 border-t border-gray-400 bg-background px-4 font-sans text-[11px] sm:h-6 sm:flex-row sm:space-y-0">
+        <footer className="bg-background fixed bottom-0 flex h-12 w-screen flex-col items-center justify-between space-y-2 border-t border-gray-400 px-4 font-sans text-[11px] sm:h-6 sm:flex-row sm:space-y-0">
           <div className="flex flex-wrap justify-center space-x-2 pt-2 sm:justify-start">
             <span className="hover:bg-accent2 hover:underline">Home</span>
             <span>|</span>
@@ -120,7 +126,7 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
             By using this website, you agree to check out the{" "}
             <Link
               href="https://github.com/ethanniser/NextFaster"
-              className="font-bold text-accent1 hover:underline"
+              className="text-accent1 font-bold hover:underline"
               target="_blank"
             >
               Source Code
@@ -136,6 +142,5 @@ async function CachedLayout({ children, authComponent, cartComponent }: { childr
         <SpeedInsights />
       </body>
     </html>
-
-  )
+  );
 }

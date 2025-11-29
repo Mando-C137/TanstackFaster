@@ -1,20 +1,34 @@
-"use client";
-import { useActionState } from "react";
 import { addToCart } from "@/lib/actions";
+import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export function AddToCartForm({ productSlug }: { productSlug: string }) {
-  const [message, formAction, isPending] = useActionState(addToCart, null);
+  const {
+    mutate: addToCartFn,
+    isPending,
+    data,
+  } = useMutation(
+    mutationOptions({
+      mutationFn: addToCart,
+      onSettled: (_1, _2, _3, _4, context) => {
+        context.client.invalidateQueries();
+      },
+    }),
+  );
+
   return (
-    <form className="flex flex-col gap-2" action={formAction}>
-      <input type="hidden" name="productSlug" value={productSlug} />
+    <form
+      className="flex flex-col gap-2"
+      onSubmit={() => addToCartFn({ data: productSlug })}
+    >
+      {/* <input type="hidden" name="productSlug" value={productSlug} /> */}
       <button
         type="submit"
-        className="max-w-[150px] rounded-[2px] bg-accent1 px-5 py-1 text-sm font-semibold text-white"
+        className="bg-accent1 max-w-[150px] rounded-[2px] px-5 py-1 text-sm font-semibold text-white"
       >
         Add to cart
       </button>
       {isPending && <p>Adding to cart...</p>}
-      {!isPending && message && <p>{message}</p>}
+      {!isPending && data && <p>{data}</p>}
     </form>
   );
 }

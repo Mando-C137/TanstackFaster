@@ -1,13 +1,26 @@
-import { Metadata } from "next";
+import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { CartItems, TotalCost } from "./-dynamic";
 import { PlaceOrderAuth } from "../-auth.client";
+import { CartItems, TotalCost } from "./-dynamic";
+import { detailedCart } from "@/lib/cart";
 
-export const metadata: Metadata = {
-  title: "Order",
-};
+export const Route = createFileRoute("/order/")({
+  head: () => ({
+    meta: [
+      {
+        title: "Order",
+      },
+    ],
+  }),
+  loader: async () => {
+    const cart = await detailedCart();
+    return { cart };
+  },
+  component: RouteComponent,
+});
 
-export default async function Page() {
+function RouteComponent() {
+  const { cart } = Route.useLoaderData();
   return (
     <main className="min-h-screen sm:p-4">
       <div className="container mx-auto p-1 sm:p-3">
@@ -18,7 +31,7 @@ export default async function Page() {
         <div className="flex grid-cols-3 flex-col gap-8 pt-4 lg:grid">
           <div className="col-span-2">
             <Suspense>
-              <CartItems />
+              <CartItems cart={cart} />
             </Suspense>
           </div>
 
@@ -27,7 +40,7 @@ export default async function Page() {
               <p className="font-semibold">
                 Merchandise{" "}
                 <Suspense>
-                  <TotalCost />
+                  <TotalCost cart={cart} />
                 </Suspense>
               </p>
               <p className="text-sm text-gray-500">

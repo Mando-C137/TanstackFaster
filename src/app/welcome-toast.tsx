@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -8,7 +6,7 @@ export function WelcomeToast() {
     // ignore if screen height is too small
     if (window.innerHeight < 850) return;
     if (!document.cookie.includes("welcome-toast=3")) {
-      toast("🚀 Welcome to NextFaster!", {
+      toast("🚀 Welcome to TanstackFaster!", {
         id: "welcome-toast",
         duration: Infinity,
         onDismiss: () => {
@@ -16,17 +14,17 @@ export function WelcomeToast() {
         },
         description: (
           <>
-            This is a highly performant e-commerce template using Next.js. All
-            of the 1M products on this site are AI generated.
+            This is a highly performant e-commerce template using TanstackStart.
+            All of the 1M products on this site are AI generated.
             <hr className="my-2" />
-            This demo is to highlight the speed a full-stack Next.js site can
-            achieve.{" "}
+            This demo is to highlight the speed a full-stack TanstackStart site
+            can achieve.{" "}
             <a
               href="https://github.com/ethanniser/NextFaster"
-              className="font-semibold text-accent1 hover:underline"
+              className="text-accent1 font-semibold hover:underline"
               target="_blank"
             >
-              Get the Source
+              Get the Source of the original NextFasterProject
             </a>
             .
           </>

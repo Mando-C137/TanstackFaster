@@ -1,7 +1,8 @@
-"use client";
-
-import NextLink from "next/link";
-import { useRouter } from "next/navigation";
+import {
+  Link as TanstackStartLink,
+  type LinkProps,
+} from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 type PrefetchImage = {
@@ -35,13 +36,17 @@ async function prefetchImages(href: string) {
 const seen = new Set<string>();
 const imageCache = new Map<string, PrefetchImage[]>();
 
-export const Link: typeof NextLink = (({ children, ...props }) => {
+export const Link = (({ children, ...props }: LinkProps) => {
   const linkRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
   let prefetchTimeout: NodeJS.Timeout | null = null;
 
+  const href =
+    props.href ??
+    router.buildLocation({ to: props.to, params: props.params }).href;
+
   useEffect(() => {
-    if (props.prefetch === false) return;
+    if (!props.preload) return;
 
     const linkElement = linkRef.current;
     if (!linkElement) return;
@@ -50,8 +55,9 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           prefetchTimeout = setTimeout(async () => {
-            router.prefetch(String(props.href));
+            router.preloadRoute({ to: props.to, params: props.params });
             await sleep(0);
 
             // if (!imageCache.has(String(props.href))) {
@@ -78,21 +84,20 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
         clearTimeout(prefetchTimeout);
       }
     };
-  }, [props.href, props.prefetch]);
+  }, [href, props.preload]);
 
   return (
-    <NextLink
+    <TanstackStartLink
       ref={linkRef}
-      prefetch={false}
       onMouseEnter={() => {
-        router.prefetch(String(props.href));
-        const images = imageCache.get(String(props.href)) || [];
+        router.preloadRoute({ to: props.to, params: props.params });
+        const images = imageCache.get(href) || [];
         for (const image of images) {
           prefetchImage(image);
         }
       }}
       onMouseDown={(e) => {
-        const url = new URL(String(props.href), window.location.href);
+        const url = new URL(href, window.location.href);
         if (
           url.origin === window.location.origin &&
           e.button === 0 &&
@@ -102,15 +107,15 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
           !e.shiftKey
         ) {
           e.preventDefault();
-          router.push(String(props.href));
+          router.navigate({ to: props.to, params: props.params });
         }
       }}
       {...props}
     >
       {children}
-    </NextLink>
+    </TanstackStartLink>
   );
-}) as typeof NextLink;
+}) as typeof TanstackStartLink;
 
 function prefetchImage(image: PrefetchImage) {
   if (image.loading === "lazy" || seen.has(image.srcset)) {

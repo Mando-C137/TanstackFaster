@@ -1,20 +1,16 @@
-import { cache } from "react";
 import { detailedCart } from "@/lib/cart";
 import { Link } from "@/components/ui/link";
-import Image from "next/image";
 import { removeFromCart } from "@/lib/actions";
 import { X } from "lucide-react";
 
-const getCartItems = cache(() => detailedCart());
-type CartItem = Awaited<ReturnType<typeof getCartItems>>[number];
+type CartItem = Awaited<ReturnType<typeof detailedCart>>[number];
 
-export async function CartItems() {
-  const cart = await getCartItems();
+export function CartItems({ cart }: { cart: CartItem[] }) {
   return (
     <>
       {cart.length > 0 && (
         <div className="pb-4">
-          <p className="font-semibold text-accent1">Delivers in 2-4 weeks</p>
+          <p className="text-accent1 font-semibold">Delivers in 2-4 weeks</p>
           <p className="text-sm text-gray-500">Need this sooner?</p>
         </div>
       )}
@@ -39,19 +35,25 @@ function CartItem({ product }: { product: CartItem }) {
   return (
     <div className="flex flex-row items-center justify-between border-t border-gray-200 pt-4">
       <Link
-        prefetch={true}
-        href={`/products/${product.subcategory.subcollection.category_slug}/${product.subcategory.slug}/${product.slug}`}
+        preload={"viewport"}
+        to={"/products/$category/$subcategory/$product"}
+        params={{
+          category: product.subcategory.subcollection.category_slug,
+          subcategory: product.subcategory.slug,
+          product: product.slug,
+        }}
       >
         <div className="flex flex-row space-x-2">
           <div className="flex h-24 w-24 items-center justify-center bg-gray-100">
-            <Image
+            {/*    eslint-disable-next-line @next/next/no-img-element */}
+            <img
               loading="eager"
               decoding="sync"
               src={product.image_url ?? "/placeholder.svg"}
               alt="Product"
               width={256}
               height={256}
-              quality={80}
+              // quality={80}
             />
           </div>
           <div className="max-w-[100px] flex-grow sm:max-w-full">
@@ -72,7 +74,7 @@ function CartItem({ product }: { product: CartItem }) {
             <p className="font-semibold">${cost}</p>
           </div>
         </div>
-        <form action={removeFromCart}>
+        <form action={(formData) => removeFromCart({ data: formData })}>
           <button type="submit">
             <input type="hidden" name="productSlug" value={product.slug} />
             <X className="h-6 w-6" />
@@ -83,9 +85,7 @@ function CartItem({ product }: { product: CartItem }) {
   );
 }
 
-export async function TotalCost() {
-  const cart = await getCartItems();
-
+export function TotalCost({ cart }: { cart: CartItem[] }) {
   const totalCost = cart.reduce(
     (acc, item) => acc + item.quantity * Number(item.price),
     0,

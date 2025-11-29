@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { cookies } from "next/headers";
+import { createServerFn } from "@tanstack/react-start";
+import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const cartSchema = z.array(
@@ -11,29 +12,31 @@ const cartSchema = z.array(
 
 export type CartItem = z.infer<typeof cartSchema>[number];
 
-export async function updateCart(newItems: CartItem[]) {
-  (await cookies()).set("cart", JSON.stringify(newItems), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
+export const updateCart = createServerFn()
+  .inputValidator((a: CartItem[]) => a)
+  .handler(({ data }) => {
+    setCookie("cart", JSON.stringify(data), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    });
   });
-}
 
-export async function getCart() {
-  const cart = (await cookies()).get("cart");
+export const getCart = createServerFn().handler(() => {
+  const cart = getCookie("cart");
   if (!cart) {
     return [];
   }
   try {
-    return cartSchema.parse(JSON.parse(cart.value));
+    return cartSchema.parse(JSON.parse(cart));
   } catch {
     console.error("Failed to parse cart cookie");
     return [];
   }
-}
+});
 
-export async function detailedCart() {
+export const detailedCart = createServerFn().handler(async () => {
   const cart = await getCart();
 
   const products = await db.query.products.findMany({
@@ -57,4 +60,4 @@ export async function detailedCart() {
       cart.find((item) => item.productSlug === product.slug)?.quantity ?? 0,
   }));
   return withQuantity;
-}
+});

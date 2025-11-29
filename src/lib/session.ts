@@ -1,7 +1,8 @@
 import { NewUser } from "@/db/schema";
-import { compare, hash } from "bcryptjs";
+import { getCookie, setCookie } from "@tanstack/react-start/server";
+import pkg from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+const { compare, hash } = pkg;
 
 const key = new TextEncoder().encode(process.env.AUTH_SECRET);
 const SALT_ROUNDS = 10;
@@ -38,7 +39,7 @@ export async function verifyToken(input: string) {
 }
 
 export async function getSession() {
-  const session = (await cookies()).get("session")?.value;
+  const session = getCookie("session");
   if (!session) return null;
   return await verifyToken(session);
 }
@@ -50,7 +51,7 @@ export async function setSession(user: NewUser) {
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
-  (await cookies()).set("session", encryptedSession, {
+  setCookie("session", encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
     secure: true,
