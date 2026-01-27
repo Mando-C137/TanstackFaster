@@ -11,7 +11,8 @@ import { eq, and, count } from "drizzle-orm";
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { sql } from "drizzle-orm";
-// import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife } from "./cache";
+import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 export const getUser = createServerFn().handler(async () => {
   const sessionCookie = getCookie("session");
@@ -46,13 +47,12 @@ export const getUser = createServerFn().handler(async () => {
 });
 
 export const getProductsForSubcategory = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    // "use cache";
-    // cacheTag("subcategory-products");
-    // cacheLife("hours");
+    cacheLife("hours");
 
     return db.query.products.findMany({
       where: (products, { eq, and }) =>
@@ -61,27 +61,26 @@ export const getProductsForSubcategory = createServerFn()
     });
   });
 
-export const getCollections = createServerFn().handler(async () => {
-  //  "use cache";
-  //  cacheTag("collections");
-  //  cacheLife("hours");
+export const getCollections = createServerFn()
+  .middleware([staticFunctionMiddleware])
+  .handler(async () => {
+    cacheLife("hours");
 
-  return db.query.collections.findMany({
-    with: {
-      categories: true,
-    },
-    orderBy: (collections, { asc }) => asc(collections.name),
+    return db.query.collections.findMany({
+      with: {
+        categories: true,
+      },
+      orderBy: (collections, { asc }) => asc(collections.name),
+    });
   });
-});
 
 export const getProductDetails = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((productSlug: string) => ({
     productSlug,
   }))
   .handler(async ({ data: { productSlug } }) => {
-    // "use cache";
-    // cacheTag("product");
-    // cacheLife("hours");
+    cacheLife("hours");
     return db.query.products.findFirst({
       where: (products, { eq }) => eq(products.slug, productSlug),
     });
@@ -92,22 +91,19 @@ export const getSubcategory = createServerFn()
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    // "use cache";
-    // cacheTag("subcategory");
-    // cacheLife("hours");
+    cacheLife("hours");
     return db.query.subcategories.findFirst({
       where: (subcategories, { eq }) => eq(subcategories.slug, subcategorySlug),
     });
   });
 
 export const getCategory = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({
     categorySlug,
   }))
   .handler(async ({ data: { categorySlug } }) => {
-    //  "use cache";
-    //  cacheTag("category");
-    //  cacheLife("hours");
+    cacheLife("hours");
     return db.query.categories.findFirst({
       where: (categories, { eq }) => eq(categories.slug, categorySlug),
       with: {
@@ -121,13 +117,12 @@ export const getCategory = createServerFn()
   });
 
 export const getCollectionDetails = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((collectionSlug: string) => ({
     collectionSlug,
   }))
   .handler(async ({ data: { collectionSlug } }) => {
-    // "use cache";
-    // cacheTag("collection");
-    // cacheLife("hours");
+    cacheLife("hours");
     return db.query.collections.findMany({
       with: {
         categories: true,
@@ -138,20 +133,16 @@ export const getCollectionDetails = createServerFn()
   });
 
 export const getProductCount = createServerFn().handler(async () => {
-  //  "use cache";
-  //  cacheTag("total-product-count");
-  //  cacheLife("hours");
+  cacheLife("hours");
   return db.select({ count: count() }).from(products);
 });
 
 // // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({ categorySlug }))
   .handler(async ({ data: { categorySlug } }) => {
-    // "use cache";
-    // cacheTag("category-product-count");
-    // cacheLife("hours");
-
+    cacheLife("hours");
     return db
       .select({ count: count() })
       .from(categories)
@@ -168,12 +159,10 @@ export const getCategoryProductCount = createServerFn()
   });
 
 export const getSubcategoryProductCount = createServerFn()
+  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({ subcategorySlug }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    // "use cache";
-    // cacheTag("subcategory-product-count");
-    // cacheLife("hours");
-
+    cacheLife("hours");
     return db
       .select({ count: count() })
       .from(products)
@@ -183,9 +172,7 @@ export const getSubcategoryProductCount = createServerFn()
 export const getSearchResults = createServerFn()
   .inputValidator((searchTerm: string) => searchTerm)
   .handler(async ({ data: searchTerm }) => {
-    //  "use cache";
-    //  cacheTag("search-results");
-    //  cacheLife("hours");
+    cacheLife("short");
     let results;
 
     // do we really need to do this hybrid search pattern?

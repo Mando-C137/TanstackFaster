@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { NewUser, users } from "@/db/schema";
 import { comparePasswords, hashPassword, setSession } from "@/lib/session";
-import { authRateLimit, signUpRateLimit } from "@/lib/rate-limit";
+// import { authRateLimit, signUpRateLimit } from "@/lib/rate-limit";
 import { createServerFn } from "@tanstack/react-start";
 import {
   clearSession,
@@ -65,7 +65,6 @@ export const signUp = createServerFn({ method: "POST" })
 export const signIn = createServerFn({ method: "POST" })
   .inputValidator(authSchema)
   .handler(async ({ data }) => {
-    console.log("Sign in action called");
     const { username, password } = data;
     const ip = getRequestHeader("x-real-ip") ?? "local";
     // const rl = await authRateLimit.limit(ip);

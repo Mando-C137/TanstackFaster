@@ -2,20 +2,34 @@ import { Link } from "@/components/ui/link";
 import { notFound } from "@tanstack/react-router";
 import { getCategory, getCategoryProductCount } from "@/lib/queries";
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { cacheHeadersFn } from "@/lib/cache";
+import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
-export const Route = createFileRoute("/_categorySidebar/products/$category/")({
-  loader: async ({ params }) => {
+const loader = createServerFn()
+  .middleware([staticFunctionMiddleware])
+  .inputValidator((data) => data as { params: { category: string } })
+  .handler(async ({ data: { params } }) => {
     const urlDecoded = decodeURIComponent(params.category);
     const cat = await getCategory({ data: urlDecoded });
     if (!cat) {
-      console.log("not found");
-      throw notFound();
+      return null;
     }
-
     const countRes = await getCategoryProductCount({ data: urlDecoded });
     return { countRes, cat };
+  });
+
+export const Route = createFileRoute("/_categorySidebar/products/$category/")({
+  loader: async ({ params }) => {
+    const data = await loader({ data: { params } });
+    if (!data) {
+      throw notFound();
+    }
+    return data;
   },
   component: Page,
+  head: ({ loaderData }) => ({ meta: [{ name: loaderData?.cat.name }] }),
+  headers: cacheHeadersFn("hours"),
 });
 
 // export async function generateStaticParams() {
@@ -23,7 +37,6 @@ export const Route = createFileRoute("/_categorySidebar/products/$category/")({
 // }
 
 function Page() {
-  // const { category } = await props.params;
   const { cat, countRes } = Route.useLoaderData();
   const { category } = Route.useParams();
 
@@ -46,7 +59,7 @@ function Page() {
               {subcollection.subcategories.map(
                 (subcategory, subcategoryIndex) => (
                   <Link
-                    preload={"viewport"}
+                    preload={"intent"}
                     key={subcategoryIndex}
                     className="group flex h-full w-full flex-row gap-2 border px-4 py-2 hover:bg-gray-100 sm:w-[200px]"
                     to={"/products/$category/$subcategory"}

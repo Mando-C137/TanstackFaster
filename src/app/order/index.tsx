@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { PlaceOrderAuth } from "../-auth.client";
 import { CartItems, TotalCost } from "./-dynamic";
 import { detailedCart } from "@/lib/cart";
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/order/")({
   head: () => ({
     meta: [
       {
-        title: "Order",
+        title: "Order | TanstackFaster",
       },
     ],
   }),

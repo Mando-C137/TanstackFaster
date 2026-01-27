@@ -6,7 +6,7 @@ export const Route = createFileRoute("/order-history/")({
   head: () => ({
     meta: [
       {
-        title: "Order History",
+        title: "Order History | TanstackFaster",
       },
     ],
   }),

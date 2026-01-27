@@ -6,8 +6,9 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Product } from "../db/schema";
 import { Link } from "@/components/ui/link";
-import { ProductSearchResult } from "@/app/api/search";
 import { useParams, useRouter } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { search } from "@/app/api/search";
 
 type SearchResult = Product & { href: string };
 
@@ -21,6 +22,7 @@ export function SearchDropdownComponent() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchFn = useServerFn(search);
 
   // we don't need react query, we have react query at home
   // react query at home:
@@ -32,17 +34,16 @@ export function SearchDropdownComponent() {
       setIsLoading(true);
 
       const searchedFor = searchTerm;
-      fetch(`/api/search?q=${searchTerm}`).then(async (results) => {
+      searchFn({ data: searchTerm }).then(async (results) => {
         const currentSearchTerm = inputRef.current?.value;
         if (currentSearchTerm !== searchedFor) {
           return;
         }
-        const json = await results.json();
         setIsLoading(false);
-        setFilteredItems(json as ProductSearchResult);
+        setFilteredItems(results);
       });
     }
-  }, [searchTerm, inputRef]);
+  }, [searchTerm, inputRef, searchFn]);
 
   const params = useParams({ strict: false });
   useEffect(() => {
@@ -127,7 +128,7 @@ export function SearchDropdownComponent() {
             <ScrollArea className="h-[300px]">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, index) => (
-                  <Link to={item.href} key={item.slug} preload={"viewport"}>
+                  <Link to={item.href} key={item.slug} preload={"intent"}>
                     <div
                       className={cn("flex cursor-pointer items-center p-2", {
                         "bg-gray-100": index === highlightedIndex,

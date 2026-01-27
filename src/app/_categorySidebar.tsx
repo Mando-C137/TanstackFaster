@@ -22,7 +22,7 @@ function Layout() {
           {allCollections.map((collection) => (
             <li key={collection.slug} className="w-full">
               <Link
-                preload={"viewport"}
+                preload={"intent"}
                 to={"/$collection"}
                 params={{ collection: collection.slug }}
                 className="hover:bg-accent2 block w-full py-1 text-xs text-gray-800 hover:underline"

@@ -52,7 +52,7 @@ export function ProductLink(props: {
   }, [imageUrl, product.name]);
   return (
     <Link
-      preload={"viewport"}
+      preload={"intent"}
       className="group flex h-[130px] w-full flex-row border px-4 py-2 hover:bg-gray-100 sm:w-[250px]"
       to={"/products/$category/$subcategory/$product"}
       params={{

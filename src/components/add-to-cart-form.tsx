@@ -10,7 +10,7 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
     mutationOptions({
       mutationFn: addToCart,
       onSettled: (_1, _2, _3, _4, context) => {
-        context.client.invalidateQueries();
+        context.client.invalidateQueries({ queryKey: ["cart"] });
       },
     }),
   );

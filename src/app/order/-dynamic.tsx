@@ -35,7 +35,7 @@ function CartItem({ product }: { product: CartItem }) {
   return (
     <div className="flex flex-row items-center justify-between border-t border-gray-200 pt-4">
       <Link
-        preload={"viewport"}
+        preload={"intent"}
         to={"/products/$category/$subcategory/$product"}
         params={{
           category: product.subcategory.subcollection.category_slug,

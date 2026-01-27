@@ -20,42 +20,38 @@ export function LoginForm() {
   const {
     mutate: signInFn,
     isPending: isSignInPending,
-    error: signInError,
+    data: signInError,
   } = useMutation(
     mutationOptions({
       mutationFn: signIn,
       onSettled: (_1, _2, _3, _4, context) => {
-        context.client.invalidateQueries();
+        context.client.invalidateQueries({ queryKey: ["user"] });
       },
     }),
   );
   const {
     mutate: signUpFn,
     isPending: isSignUpPending,
-    error: signUpError,
+    data: signUpError,
   } = useMutation(
     mutationOptions({
       mutationFn: signUp,
       onSettled: (_1, _2, _3, _4, context) => {
-        context.client.invalidateQueries();
+        context.client.invalidateQueries({ queryKey: ["user"] });
       },
     }),
   );
 
   const formRef = useRef<HTMLFormElement>(null);
   const isPending = isSignInPending || isSignUpPending;
-  const error = signInError ?? signUpError;
+  const error = (signInError ?? signUpError)?.error;
 
   const handleAuth = async (type: "signIn" | "signUp") => {
-    console.log("form");
     if (!formRef.current) return;
 
     const formData = new FormData(formRef.current);
-    if (type === "signIn") {
-      signInFn({ data: formData });
-    } else {
-      signUpFn({ data: formData });
-    }
+    const fn = type === "signIn" ? signInFn : signUpFn;
+    fn({ data: formData });
   };
 
   return (
@@ -138,7 +134,7 @@ export function SignOut(props: { username: string }) {
     mutationOptions({
       mutationFn: signOut,
       onSettled: (_1, _2, _3, _4, context) => {
-        context.client.invalidateQueries();
+        context.client.invalidateQueries({ queryKey: ["user"] });
       },
     }),
   );

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import "./globals.css";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { MenuIcon } from "lucide-react";
@@ -13,7 +13,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-export const metadata: Metadata = {
+export const metadata /*:Metadata*/ = {
   title: {
     template: "%s | NextFaster",
     default: "NextFaster",
@@ -27,7 +27,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <CachedLayout authComponent={<AuthServer />} cartComponent={<Cart />}>
+    <CachedLayout
+      authComponent={<AuthServer />}
+      cartComponent={
+        null
+        //< Cart />
+      }
+    >
       {children}
     </CachedLayout>
   );
@@ -66,43 +72,43 @@ async function CachedLayout({
                 </Suspense>
               </div>
               <div className="flex w-full flex-col items-start justify-center sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-                <Link
-                  prefetch={true}
+                <a
+                  // prefetch={true}
                   href="/"
                   className="text-accent1 text-4xl font-bold"
                 >
                   NextFaster
-                </Link>
+                </a>
                 <div className="items flex w-full flex-row items-center justify-between gap-4">
                   <div className="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
                     <SearchDropdownComponent />
                   </div>
                   <div className="flex flex-row justify-between space-x-4">
                     <div className="relative">
-                      <Link
-                        prefetch={true}
+                      <a
+                        // prefetch={true}
                         href="/order"
                         className="text-accent1 text-lg hover:underline"
                       >
                         ORDER
-                      </Link>
+                      </a>
                       <Suspense>{cartComponent}</Suspense>
                     </div>
-                    <Link
-                      prefetch={true}
+                    <a
+                      // prefetch={true}
                       href="/order-history"
                       className="text-accent1 hidden text-lg hover:underline md:block"
                     >
                       ORDER HISTORY
-                    </Link>
-                    <Link
-                      prefetch={true}
+                    </a>
+                    <a
+                      // prefetch={true}
                       href="/order-history"
                       aria-label="Order History"
                       className="text-accent1 block text-lg hover:underline md:hidden"
                     >
                       <MenuIcon />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -124,13 +130,13 @@ async function CachedLayout({
           </div>
           <div className="text-center sm:text-right">
             By using this website, you agree to check out the{" "}
-            <Link
+            <a
               href="https://github.com/ethanniser/NextFaster"
               className="text-accent1 font-bold hover:underline"
               target="_blank"
             >
               Source Code
-            </Link>
+            </a>
           </div>
         </footer>
         {/* does putting this in suspense do anything? */}

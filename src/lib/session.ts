@@ -1,10 +1,15 @@
 import { NewUser } from "@/db/schema";
+import { env } from "@/env";
+import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import pkg from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 const { compare, hash } = pkg;
 
-const key = new TextEncoder().encode(process.env.AUTH_SECRET);
+const getKey = createServerFn().handler(() => {
+  const key = new TextEncoder().encode(env.AUTH_SECRET);
+  return key;
+});
 const SALT_ROUNDS = 10;
 
 export async function hashPassword(password: string) {
@@ -28,11 +33,11 @@ export async function signToken(payload: SessionData) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("1 day from now")
-    .sign(key);
+    .sign(await getKey());
 }
 
 export async function verifyToken(input: string) {
-  const { payload } = await jwtVerify(input, key, {
+  const { payload } = await jwtVerify(input, await getKey(), {
     algorithms: ["HS256"],
   });
   return payload as SessionData;

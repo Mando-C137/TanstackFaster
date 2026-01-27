@@ -4,6 +4,9 @@ import { notFound } from "@tanstack/react-router";
 import { AddToCartForm } from "@/components/add-to-cart-form";
 
 import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
+import { alt, contentType, size } from "./og";
+import { cacheHeadersFn } from "@/lib/cache";
+import { env } from "@/env";
 
 export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/$product/",
@@ -21,6 +24,35 @@ export const Route = createFileRoute(
     }
 
     return { productData, relatedUnshifted };
+  },
+  headers: cacheHeadersFn("hours"),
+  head: async ({ loaderData, params }) => {
+    const product = loaderData?.productData;
+    if (!product) {
+      throw notFound();
+    }
+
+    const schema = import.meta.env.DEV ? "http" : "http";
+    const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
+
+    if (!host || !schema) {
+      return {};
+    }
+    const url = `${"http"}://${host}/products/${params.category}/${params.subcategory}/${params.product}`;
+
+    return {
+      meta: [
+        { title: `${product.name} | TanstackFaster` },
+        { name: "og:title", content: product.name },
+        { name: "og:description", content: product.description },
+        { name: "og:url", content: url },
+        { name: "og:image:url", content: `${url}/og` },
+        { name: "og:image:type", content: contentType },
+        { name: "og:image:width", content: `${size.width}` },
+        { name: "og:image:height", content: `${size.height}` },
+        { name: "og:image:alt", content: alt },
+      ],
+    };
   },
   component: Page,
 });
@@ -46,23 +78,6 @@ export const Route = createFileRoute(
 //     subcategory: s.subcategory.slug,
 //     product: s.slug,
 //   }));
-// }
-
-// export async function generateMetadata(props: {
-//   params: Promise<{ product: string; category: string; subcategory: string }>;
-// }): Promise<Metadata> {
-//   const { product: productParam } = await props.params;
-//   const urlDecodedProduct = decodeURIComponent(productParam);
-
-//   const product = await getProductDetails(urlDecodedProduct);
-
-//   if (!product) {
-//     return notFound();
-//   }
-
-//   return {
-//     openGraph: { title: product.name, description: product.description },
-//   };
 // }
 
 function Page() {

@@ -17,7 +17,7 @@ export const updateCart = createServerFn()
   .handler(({ data }) => {
     setCookie("cart", JSON.stringify(data), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: import.meta.env.PROD,
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 7, // 1 week
     });

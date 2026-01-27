@@ -5,7 +5,9 @@ import {
   getSubcategory,
   getSubcategoryProductCount,
 } from "@/lib/queries";
-// import { db } from "@/db";
+import { contentType, alt, size } from "./og";
+import { cacheHeadersFn } from "@/lib/cache";
+import { env } from "@/env";
 
 // export async function generateStaticParams() {
 //   const results = await db.query.subcategories.findMany({
@@ -23,29 +25,6 @@ import {
 //   }));
 // }
 
-// export async function generateMetadata(props: {
-//   params: Promise<{ category: string; subcategory: string }>;
-// }): Promise<Metadata> {
-//   const { subcategory: subcategoryParam } = await props.params;
-//   const urlDecodedCategory = decodeURIComponent(subcategoryParam);
-
-//   const [subcategory, rows] = await Promise.all([
-//     getSubcategory(urlDecodedCategory),
-//     getSubcategoryProductCount(urlDecodedCategory),
-//   ]);
-
-//   if (!subcategory) {
-//     return notFound();
-//   }
-
-//   const description = rows[0]?.count
-//     ? `Choose from over ${rows[0]?.count - 1} products in ${subcategory.name}. In stock and ready to ship.`
-//     : undefined;
-
-//   return {
-//     openGraph: { title: subcategory.name, description },
-//   };
-// }
 export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/",
 )({
@@ -62,6 +41,49 @@ export const Route = createFileRoute(
     return { products, countRes };
   },
   component: Page,
+  headers: cacheHeadersFn("hours"),
+  head: async ({ loaderData, params }) => {
+    if (!loaderData) return {};
+
+    const { subcategory: subcategoryParam } = params;
+    const urlDecodedCategory = decodeURIComponent(subcategoryParam);
+
+    const [subcategory, rows] = await Promise.all([
+      getSubcategory({ data: { subcategorySlug: urlDecodedCategory } }),
+      getSubcategoryProductCount({ data: urlDecodedCategory }),
+    ]);
+
+    if (!subcategory) {
+      throw notFound();
+    }
+
+    const description = rows[0]?.count
+      ? `Choose from over ${rows[0]?.count - 1} products in ${subcategory.name}. In stock and ready to ship.`
+      : undefined;
+
+    const schema = import.meta.env.DEV ? "http" : "https";
+    const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
+
+    if (!host || !schema) {
+      return {};
+    }
+    const url = `${"http"}://${host}/products/${params.category}/${params.subcategory}`;
+
+    return {
+      meta: [
+        { title: `${subcategory.name} | TanstackFaster` },
+        { name: "description", content: description },
+        { name: "og:title", content: subcategory.name },
+        { name: "og:url", content: url },
+        { name: "og:description", content: subcategory.name },
+        { name: "og:image:url", content: `${url}/og` },
+        { name: "og:image:type", content: contentType },
+        { name: "og:image:width", content: `${size.width}` },
+        { name: "og:image:height", content: `${size.height}` },
+        { name: "og:image:alt", content: alt },
+      ],
+    };
+  },
 });
 
 function Page() {

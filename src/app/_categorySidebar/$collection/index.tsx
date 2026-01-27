@@ -1,18 +1,26 @@
 import { Link } from "@/components/ui/link";
 import { getCollectionDetails } from "@/lib/queries";
 import { createFileRoute } from "@tanstack/react-router";
+import { cacheHeadersFn } from "@/lib/cache";
+import { createServerFn } from "@tanstack/react-start";
+import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 // export async function generateStaticParams() {
-//   return await db.select({ collection: collections.slug }).from(collections);
+//   return await db.collect({ collection: collections.slug }).from(collections);
 // }
 
-export const Route = createFileRoute("/_categorySidebar/$collection/")({
-  loader: async ({ params }) => {
+const loader = createServerFn()
+  .middleware([staticFunctionMiddleware])
+  .inputValidator((data) => data as { params: { collection: string } })
+  .handler(async ({ data: { params } }) => {
     const collectionName = decodeURIComponent(params.collection);
-
     const collections = await getCollectionDetails({ data: collectionName });
     return collections;
-  },
+  });
+
+export const Route = createFileRoute("/_categorySidebar/$collection/")({
+  loader: async ({ params }) => await loader({ data: { params } }),
+  headers: cacheHeadersFn("hours"),
   component: Home,
 });
 
@@ -28,7 +36,7 @@ function Home() {
           <div className="flex flex-row flex-wrap justify-center gap-2 border-b-2 py-4 sm:justify-start">
             {collection.categories.map((category) => (
               <Link
-                preload={"viewport"}
+                preload={"intent"}
                 key={category.name}
                 className="flex w-[125px] flex-col items-center text-center"
                 to={"/products/$category"}

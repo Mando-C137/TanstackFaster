@@ -1,22 +1,21 @@
 import {
   Outlet,
-  createRootRoute,
   HeadContent,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 import { Link } from "@/components/ui/link";
 import appCss from "./globals.css?url";
+import favicon from "./favicon.ico?url";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MenuIcon } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import { WelcomeToast } from "./welcome-toast";
 import { Cart } from "@/components/cart";
 import { AuthServer } from "./-auth.client";
-import { getCart } from "@/lib/cart";
 import type { QueryClient } from "@tanstack/react-query";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
@@ -38,15 +37,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           rel: "stylesheet",
           href: appCss,
         },
+        {
+          rel: "icon",
+          href: favicon,
+        },
       ],
     }),
-    loader: async () => ({ cart: await getCart() }),
     component: RootLayout,
   },
 );
 
 function RootLayout() {
-  const { cart } = Route.useLoaderData();
   return (
     <html lang="en" className="h-full">
       <head>
@@ -73,39 +74,34 @@ function RootLayout() {
                 </Suspense>
               </div>
               <div className="flex w-full flex-col items-start justify-center sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-                <Link
-                  preload={"viewport"}
-                  to="/"
-                  className="text-accent1 text-4xl font-bold"
-                >
-                  TanstackFaster
-                </Link>
-                <div className="items flex w-full flex-row items-center justify-between gap-4">
+                {/* <NextToTanstack /> */}
+                <NextToTanstack />
+                <div className="flex w-full flex-row items-center justify-between gap-4">
                   <div className="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
                     <SearchDropdownComponent />
                   </div>
                   <div className="flex flex-row justify-between space-x-4">
                     <div className="relative">
                       <Link
-                        preload={"viewport"}
+                        preload={"intent"}
                         to="/order"
                         className="text-accent1 text-lg hover:underline"
                       >
                         ORDER
                       </Link>
                       <Suspense>
-                        <Cart cart={cart} />
+                        <Cart />
                       </Suspense>
                     </div>
                     <Link
-                      preload={"viewport"}
+                      preload={"intent"}
                       to="/order-history"
                       className="text-accent1 hidden text-lg hover:underline md:block"
                     >
                       ORDER HISTORY
                     </Link>
                     <Link
-                      preload={"viewport"}
+                      preload={"intent"}
                       to="/order-history"
                       aria-label="Order History"
                       className="text-accent1 block text-lg hover:underline md:hidden"
@@ -155,5 +151,62 @@ function RootLayout() {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function NextToTanstack() {
+  return (
+    <a
+      href="https://next-faster.vercel.app"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-accent1 group flex items-center text-4xl font-bold"
+    >
+      <div className="logo-cube-container">
+        <div className="logo-cube">
+          {/* Front face: TanstackFaster (default) */}
+          <span className="logo-face logo-face-front">TanstackFaster</span>
+          {/* Bottom face: NextFaster (shown on hover) */}
+          <span className="logo-face logo-face-bottom">NextFaster</span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+export default function CylinderLink() {
+  const [flipped, setFlipped] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFlipped(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="text-accent1 flex items-center justify-center overflow-hidden">
+      {/* Centered wrapper with equal perspective from center */}
+      <div className="relative flex justify-center perspective-[1000px]">
+        <Link
+          to="/"
+          className="relative inline-block h-10 w-[15ch] text-center text-4xl font-bold"
+        >
+          <div
+            className={`relative h-full w-full transition-transform duration-1000 transform-3d ${
+              flipped ? "transform-[rotateX(90deg)]" : ""
+            }`}
+          >
+            {/* Front Face */}
+            <span className="absolute inset-0 flex h-full w-full transform-[translateZ(1.25rem)] items-center justify-center rounded-md backface-hidden">
+              NextFaster
+            </span>
+
+            {/* Bottom Face */}
+            <span className="absolute inset-0 flex h-full w-full transform-[rotateX(-90deg)_translateZ(1.25rem)] items-center justify-center rounded-md backface-hidden">
+              TanstackFaster
+            </span>
+          </div>
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -1,8 +1,10 @@
+import { env } from "@/env";
 import {
   Link as TanstackStartLink,
   type LinkProps,
 } from "@tanstack/react-router";
 import { useRouter } from "@tanstack/react-router";
+import { cons } from "effect/List";
 import { useEffect, useRef } from "react";
 
 type PrefetchImage = {
@@ -26,7 +28,7 @@ async function prefetchImages(href: string) {
     priority: "low",
   });
   // only throw in dev
-  if (!imageResponse.ok && process.env.NODE_ENV === "development") {
+  if (!imageResponse.ok && import.meta.env.DEV) {
     throw new Error("Failed to prefetch images");
   }
   const { images } = await imageResponse.json();
@@ -39,11 +41,12 @@ const imageCache = new Map<string, PrefetchImage[]>();
 export const Link = (({ children, ...props }: LinkProps) => {
   const linkRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
-  let prefetchTimeout: NodeJS.Timeout | null = null;
+  const prefetchTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const href =
-    props.href ??
-    router.buildLocation({ to: props.to, params: props.params }).href;
+  const href = router.buildLocation({
+    to: props.to,
+    params: props.params,
+  }).href;
 
   useEffect(() => {
     if (!props.preload) return;
@@ -55,22 +58,21 @@ export const Link = (({ children, ...props }: LinkProps) => {
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          prefetchTimeout = setTimeout(async () => {
+          prefetchTimeout.current = setTimeout(async () => {
             router.preloadRoute({ to: props.to, params: props.params });
             await sleep(0);
 
-            // if (!imageCache.has(String(props.href))) {
-            //   void prefetchImages(String(props.href)).then((images) => {
-            //     imageCache.set(String(props.href), images);
-            //   }, console.error);
-            // }
+            if (!imageCache.has(href)) {
+              void prefetchImages(href).then((images) => {
+                imageCache.set(href, images);
+              }, console.error);
+            }
 
             observer.unobserve(entry.target);
           }, 300);
-        } else if (prefetchTimeout) {
-          clearTimeout(prefetchTimeout);
-          prefetchTimeout = null;
+        } else if (prefetchTimeout.current) {
+          clearTimeout(prefetchTimeout.current);
+          prefetchTimeout.current = null;
         }
       },
       { rootMargin: "0px", threshold: 0.1 },
@@ -80,11 +82,11 @@ export const Link = (({ children, ...props }: LinkProps) => {
 
     return () => {
       observer.disconnect();
-      if (prefetchTimeout) {
-        clearTimeout(prefetchTimeout);
+      if (prefetchTimeout.current) {
+        clearTimeout(prefetchTimeout.current);
       }
     };
-  }, [href, props.preload]);
+  }, [href, props.params, props.preload, props.to, router]);
 
   return (
     <TanstackStartLink
