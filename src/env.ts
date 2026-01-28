@@ -5,11 +5,8 @@ import { vite } from "@t3-oss/env-core/presets-zod";
 export const env = createEnv({
   server: {
     DATABASE_URL: z.string().min(1),
-    DATABASE_PASSWORD: z.string().min(1),
-    DATABASE_USER: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
-    VERCEL_URL: z.string().min(1),
-    NEON_DB_URL: z.string().min(1),
+    VERCEL_URL: z.string().min(1)
   },
 
   /**
