@@ -1,12 +1,11 @@
 import { parseHTML } from "linkedom";
 import { createFileRoute } from "@tanstack/react-router";
-import { env } from "@/env";
 
 export const Route = createFileRoute("/api/prefetch-images/$")({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
-        const schema = import.meta.env.DEV ? "http" : "http";
+        const schema = import.meta.env.DEV ? "http" : "https";
         const host = new URL(request.url).host;
         if (!host) {
           return new Response("Failed to get hostname from env", {
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/api/prefetch-images/$")({
         if (!href) {
           return new Response("Missing url parameter", { status: 400 });
         }
-        const url = `${"http"}://${host}/${href}`;
+        const url = `${schema}://${host}/${href}`;
         const response = await fetch(url);
         if (!response.ok) {
           return new Response("Failed to fetch", { status: response.status });

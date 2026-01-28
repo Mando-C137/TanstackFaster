@@ -4,7 +4,6 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 
 export const search = createServerFn({ method: "GET" })
   .inputValidator((searchTerm: string) => ({ searchTerm }))
-
   .handler(async ({ data: { searchTerm } }) => {
     if (!searchTerm || !searchTerm.length) {
       return [];

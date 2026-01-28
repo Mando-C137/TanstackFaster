@@ -8,7 +8,7 @@ import { Product } from "../db/schema";
 import { Link } from "@/components/ui/link";
 import { useParams, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { search } from "@/app/api/search";
+import { search } from "@/lib/search";
 
 type SearchResult = Product & { href: string };
 

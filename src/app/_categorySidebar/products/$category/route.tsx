@@ -35,6 +35,14 @@ export const Route = createFileRoute("/_categorySidebar/products/$category")({
           name: "og:description",
           content: `Choose from our selection of ${category.name.toLowerCase()}, including ${examples + (category.subcollections.length > 1 ? `,` : ``)} and more. In stock and ready to ship.`,
         },
+        {
+          name: "og:url",
+          content: `/opengraph-image.png`,
+        },
+        {
+          name: "og::image:url",
+          content: `/opengraph-image.png`,
+        },
       ],
     };
   },

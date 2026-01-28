@@ -1,10 +1,8 @@
-import { env } from "@/env";
 import {
   Link as TanstackStartLink,
   type LinkProps,
 } from "@tanstack/react-router";
 import { useRouter } from "@tanstack/react-router";
-import { cons } from "effect/List";
 import { useEffect, useRef } from "react";
 
 type PrefetchImage = {

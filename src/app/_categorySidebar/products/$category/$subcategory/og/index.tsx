@@ -1,6 +1,6 @@
 import { cacheHeadersFn } from "@/lib/cache";
 import { getSubcategory } from "@/lib/queries";
-import { loadFont } from "@/lib/utils";
+import { loadFont } from "@/lib/utils.server";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 // Image metadata

@@ -26,7 +26,7 @@ export default defineConfig({
         },
       },
     }),
-    nitro({ preset: "vercel" }),
+    nitro(),
     viteReact({
       babel: {
         plugins: ["babel-plugin-react-compiler"],

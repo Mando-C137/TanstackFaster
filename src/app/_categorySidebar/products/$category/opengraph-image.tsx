@@ -1,7 +1,7 @@
 // import { notFound } from "next/navigation";
 import { getCategory } from "@/lib/queries";
 import { notFound } from "@tanstack/react-router";
-import { loadFont } from "@/lib/utils";
+import { loadFont } from "@/lib/utils.server";
 
 // Route segment config
 export const runtime = "edge";

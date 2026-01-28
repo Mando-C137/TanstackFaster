@@ -1,6 +1,6 @@
 import { getProductDetails } from "@/lib/queries";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { loadFont } from "@/lib/utils";
+import { loadFont } from "@/lib/utils.server";
 
 // Image metadata
 export const alt = "About the product";

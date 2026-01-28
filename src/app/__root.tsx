@@ -6,10 +6,9 @@ import {
 } from "@tanstack/react-router";
 import { Link } from "@/components/ui/link";
 import appCss from "./globals.css?url";
-import favicon from "./favicon.ico?url";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+// import { Analytics } from "@vercel/analytics/react";
+// import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MenuIcon } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
@@ -39,7 +38,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         {
           rel: "icon",
-          href: favicon,
+          href: "/favicon.ico",
         },
       ],
     }),
@@ -145,8 +144,8 @@ function RootLayout() {
           <Toaster closeButton />
           <WelcomeToast />
         </Suspense>
-        <Analytics scriptSrc="/insights/events.js" endpoint="/hfi/events" />
-        <SpeedInsights />
+        {/* <Analytics scriptSrc="/insights/events.js" endpoint="/hfi/events" />
+        <SpeedInsights /> */}
 
         <Scripts />
       </body>
