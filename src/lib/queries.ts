@@ -47,7 +47,7 @@ export const getUser = createServerFn().handler(async () => {
 });
 
 export const getProductsForSubcategory = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({
     subcategorySlug,
   }))
@@ -62,7 +62,7 @@ export const getProductsForSubcategory = createServerFn()
   });
 
 export const getCollections = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .handler(async () => {
     cacheLife("hours");
 
@@ -75,7 +75,7 @@ export const getCollections = createServerFn()
   });
 
 export const getProductDetails = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((productSlug: string) => ({
     productSlug,
   }))
@@ -98,7 +98,7 @@ export const getSubcategory = createServerFn()
   });
 
 export const getCategory = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({
     categorySlug,
   }))
@@ -117,7 +117,7 @@ export const getCategory = createServerFn()
   });
 
 export const getCollectionDetails = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((collectionSlug: string) => ({
     collectionSlug,
   }))
@@ -139,7 +139,7 @@ export const getProductCount = createServerFn().handler(async () => {
 
 // // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({ categorySlug }))
   .handler(async ({ data: { categorySlug } }) => {
     cacheLife("hours");
@@ -159,7 +159,7 @@ export const getCategoryProductCount = createServerFn()
   });
 
 export const getSubcategoryProductCount = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({ subcategorySlug }))
   .handler(async ({ data: { subcategorySlug } }) => {
     cacheLife("hours");

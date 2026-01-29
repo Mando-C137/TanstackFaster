@@ -7,7 +7,7 @@ import { cacheHeadersFn } from "@/lib/cache";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 const loader = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((data) => data as { params: { category: string } })
   .handler(async ({ data: { params } }) => {
     const urlDecoded = decodeURIComponent(params.category);

@@ -10,7 +10,7 @@ import { staticFunctionMiddleware } from "@tanstack/start-static-server-function
 // }
 
 const loader = createServerFn()
-  .middleware([staticFunctionMiddleware])
+  //  .middleware([staticFunctionMiddleware])
   .inputValidator((data) => data as { params: { collection: string } })
   .handler(async ({ data: { params } }) => {
     const collectionName = decodeURIComponent(params.collection);
