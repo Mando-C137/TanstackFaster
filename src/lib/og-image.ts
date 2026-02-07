@@ -1,5 +1,4 @@
 import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
 import { GEIST_FONT_BASE64 } from "./font-data";
 
 interface GenerateOGImageOptions {
@@ -37,15 +36,9 @@ export async function generateOGImage({
     ],
   });
 
-  const resvg = new Resvg(svg, {
-    fitTo: {
-      mode: "width",
-      value: width,
-    },
-  });
-
-  const pngData = resvg.render();
-  const pngBuffer = pngData.asPng();
+  // Dynamic import to avoid bundling issues with native binaries
+  const { default: sharp } = await import("sharp");
+  const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
 
   return new Response(new Uint8Array(pngBuffer), {
     headers: {

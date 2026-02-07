@@ -10,9 +10,6 @@ export default defineConfig(() => ({
   server: {
     port: 3000,
   },
-  ssr: {
-    external: ["@resvg/resvg-js"],
-  },
   define: {
     "import.meta.env.VITE_VERCEL_URL": JSON.stringify(
       process.env.VERCEL_URL || "localhost:3000",
