@@ -5,7 +5,7 @@ import { AddToCartForm } from "@/components/add-to-cart-form";
 
 import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
-import { env } from "@/env";
+import { getURL } from "@/lib/utils";
 
 export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/$product/",
@@ -25,19 +25,13 @@ export const Route = createFileRoute(
     return { productData, relatedUnshifted };
   },
   headers: cacheHeadersFn("hours"),
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, match: { pathname } }) => {
     const product = loaderData?.productData;
     if (!product) {
       throw notFound();
     }
 
-    const schema = import.meta.env.DEV ? "http" : "https";
-    const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
-
-    if (!host) {
-      return {};
-    }
-    const url = `${schema}://${host}/products/${params.category}/${params.subcategory}/${params.product}`;
+    const url = `${getURL()}${pathname}`;
 
     return {
       meta: [

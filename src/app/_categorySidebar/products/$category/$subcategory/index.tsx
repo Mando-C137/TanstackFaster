@@ -7,7 +7,7 @@ import {
   getSubcategoryProductCount,
 } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
-import { env } from "@/env";
+import { getURL } from "@/lib/utils";
 
 // export async function generateStaticParams() {
 //   const results = await db.query.subcategories.findMany({
@@ -43,7 +43,7 @@ export const Route = createFileRoute(
   },
   component: Page,
   headers: cacheHeadersFn("hours"),
-  head: async ({ loaderData, params }) => {
+  head: async ({ loaderData, params, match: { pathname } }) => {
     if (!loaderData) return {};
 
     const { subcategory: subcategoryParam } = params;
@@ -62,13 +62,7 @@ export const Route = createFileRoute(
       ? `Choose from over ${rows[0]?.count - 1} products in ${subcategory.name}. In stock and ready to ship.`
       : undefined;
 
-    const schema = import.meta.env.DEV ? "http" : "https";
-    const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
-
-    if (!host) {
-      return {};
-    }
-    const url = `${schema}://${host}/products/${params.category}/${params.subcategory}`;
+    const url = `${getURL()}${pathname}`;
 
     return {
       meta: [

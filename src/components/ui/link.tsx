@@ -124,7 +124,6 @@ function prefetchImage(image: PrefetchImage) {
   img.sizes = image.sizes;
   seen.add(image.srcset);
   img.srcset = image.srcset;
-  console.log(image.src);
   img.src = image.src;
   img.alt = image.alt;
 }

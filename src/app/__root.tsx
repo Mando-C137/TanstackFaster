@@ -17,32 +17,49 @@ import type { QueryClient } from "@tanstack/react-query";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { Cart } from "@/components/cart";
 import { Link } from "@/components/ui/link";
+import { getURL } from "@/lib/utils";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
-    head: () => ({
-      meta: [
-        { charSet: "utf-8" },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1",
-        },
-        {
-          title: "TanStackFaster",
-          description: "A performant site built with TanstackStart",
-        },
-      ],
-      links: [
-        {
-          rel: "stylesheet",
-          href: appCss,
-        },
-        {
-          rel: "icon",
-          href: "/favicon.ico",
-        },
-      ],
-    }),
+    head: () => {
+      const url = getURL();
+      return {
+        meta: [
+          { charSet: "utf-8" },
+          {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1",
+          },
+          {
+            title: "TanStackFaster",
+            description: "A performant site built with TanstackStart",
+          },
+          { name: "og:title", content: "TanStackFaster" },
+          {
+            name: "og:description",
+            content: `A performant site built with TanstackStart`,
+          },
+          {
+            name: "og:url",
+            content: `${url}/opengraph-image.png`,
+          },
+          {
+            name: "og:image:url",
+            content: `${url}/opengraph-image.png`,
+          },
+        ],
+        links: [
+          {
+            rel: "stylesheet",
+            href: appCss,
+          },
+          {
+            rel: "icon",
+            href: "/favicon.ico",
+          },
+        ],
+      };
+    },
     component: RootLayout,
   },
 );

@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
 import { getCategory } from "@/lib/queries";
+import { getURL } from "@/lib/utils";
 
 export const Route = createFileRoute("/_categorySidebar/products/$category")({
   component: Layout,
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/_categorySidebar/products/$category")({
     }
     const { category } = loaderData;
 
+    const url = getURL();
+
     const examples = category.subcollections
       .slice(0, 2)
       .map((s) => s.name)
@@ -37,11 +40,11 @@ export const Route = createFileRoute("/_categorySidebar/products/$category")({
         },
         {
           name: "og:url",
-          content: `/opengraph-image.png`,
+          content: `${url}/opengraph-image.png`,
         },
         {
-          name: "og::image:url",
-          content: `/opengraph-image.png`,
+          name: "og:image:url",
+          content: `${url}/opengraph-image.png`,
         },
       ],
     };

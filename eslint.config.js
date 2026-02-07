@@ -9,7 +9,7 @@ export default [
   ...tseslint.configs.recommended,
   ...pluginQuery.configs["flat/recommended"],
   ...pluginRouter.configs["flat/recommended"],
-  reactHooks.configs["recommended-latest"],
+  reactHooks.configs.flat["recommended-latest"],
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
