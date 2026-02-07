@@ -6,7 +6,7 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().min(1),
     AUTH_SECRET: z.string().min(1),
-    VERCEL_URL: z.string().min(1)
+    VERCEL_URL: z.string().min(1),
   },
 
   /**

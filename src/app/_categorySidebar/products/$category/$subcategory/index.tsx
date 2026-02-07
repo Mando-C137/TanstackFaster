@@ -71,7 +71,7 @@ export const Route = createFileRoute(
         { name: "og:title", content: subcategory.name },
         { name: "og:url", content: url },
         { name: "og:description", content: subcategory.name },
-        { name: "og:image:url", content: `${url}/og` },
+        { name: "og:image:url", content: `${url}og` },
         { name: "og:image:type", content: contentType },
         { name: "og:image:width", content: `${size.width}` },
         { name: "og:image:height", content: `${size.height}` },
