@@ -1,10 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { alt, contentType, size } from "./og";
 import { ProductLink } from "@/components/ui/product-card";
-import { notFound } from "@tanstack/react-router";
 import { AddToCartForm } from "@/components/add-to-cart-form";
 
 import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
-import { alt, contentType, size } from "./og";
 import { cacheHeadersFn } from "@/lib/cache";
 import { env } from "@/env";
 
@@ -26,7 +25,7 @@ export const Route = createFileRoute(
     return { productData, relatedUnshifted };
   },
   headers: cacheHeadersFn("hours"),
-  head: async ({ loaderData, params }) => {
+  head: ({ loaderData, params }) => {
     const product = loaderData?.productData;
     if (!product) {
       throw notFound();
@@ -35,7 +34,7 @@ export const Route = createFileRoute(
     const schema = import.meta.env.DEV ? "http" : "https";
     const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
 
-    if (!host || !schema) {
+    if (!host) {
       return {};
     }
     const url = `${schema}://${host}/products/${params.category}/${params.subcategory}/${params.product}`;
@@ -45,8 +44,8 @@ export const Route = createFileRoute(
         { title: `${product.name} | TanstackFaster` },
         { name: "og:title", content: product.name },
         { name: "og:description", content: product.description },
-        // { name: "og:url", content: url },
-        // { name: "og:image:url", content: `${url}/og` },
+        { name: "og:url", content: url },
+        { name: "og:image:url", content: `${url}/og` },
         { name: "og:image:type", content: contentType },
         { name: "og:image:width", content: `${size.width}` },
         { name: "og:image:height", content: `${size.height}` },
@@ -98,7 +97,6 @@ function Page() {
       </h1>
       <div className="flex flex-col gap-2">
         <div className="flex flex-row gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             loading="eager"
             decoding="sync"
@@ -123,7 +121,7 @@ function Page() {
           </h2>
         )}
         <div className="flex flex-row flex-wrap gap-2">
-          {related?.map((product) => (
+          {related.map((product) => (
             <ProductLink
               key={product.name}
               loading="lazy"

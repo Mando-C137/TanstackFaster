@@ -1,7 +1,7 @@
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { cacheHeadersFn } from "@/lib/cache";
 import { getSubcategory } from "@/lib/queries";
 import { loadFont } from "@/lib/utils.server";
-import { createFileRoute, notFound } from "@tanstack/react-router";
 
 // Image metadata
 export const alt = "About the subcategory";
@@ -70,7 +70,6 @@ export const Route = createFileRoute(
                   justifyContent: "center",
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   style={{
                     width: "300px",

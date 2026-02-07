@@ -1,5 +1,5 @@
-import { getProductDetails } from "@/lib/queries";
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { getProductDetails } from "@/lib/queries";
 import { loadFont } from "@/lib/utils.server";
 
 // Image metadata
@@ -67,7 +67,6 @@ export const Route = createFileRoute(
                   justifyContent: "center",
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   style={{
                     width: "300px",

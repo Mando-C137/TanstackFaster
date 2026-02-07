@@ -1,26 +1,23 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { Link } from "@/components/ui/link";
 import { cacheHeadersFn, cacheLife } from "@/lib/cache";
 import { getCollections, getProductCount } from "@/lib/queries";
-import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
-const loader = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
-  .handler(async () => {
-    cacheLife("hours");
-    const [collections, productCount] = await Promise.all([
-      getCollections(),
-      getProductCount(),
-    ]);
-    return { collections, productCount };
-  });
+const loader = createServerFn().handler(async () => {
+  cacheLife("hours");
+  const [collections, productCount] = await Promise.all([
+    getCollections(),
+    getProductCount(),
+  ]);
+  return { collections, productCount };
+});
 
 export const Route = createFileRoute("/_categorySidebar/")({
   component: Home,
   pendingComponent: () => <div>Loading...</div>,
+  loader: () => loader(),
   headers: cacheHeadersFn("hours"),
-  loader: async () => await loader(),
 });
 
 function Home() {
@@ -51,7 +48,6 @@ function Home() {
                     to={"/products/$category"}
                     params={{ category: category.slug }}
                   >
-                    {/* eslint-disable @next/next/no-img-element */}
                     <img
                       loading={imageIndex < 15 ? "eager" : "lazy"}
                       decoding="sync"

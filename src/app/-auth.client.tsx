@@ -1,20 +1,14 @@
-import { getUser } from "@/lib/queries";
-import { signOut } from "./-login/serverFunctions";
+import { useRef } from "react";
+import { mutationOptions, useMutation, useQuery } from "@tanstack/react-query";
+import { signIn, signOut, signUp } from "./-login/serverFunctions";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { signIn, signUp } from "./-login/serverFunctions";
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  mutationOptions,
-  queryOptions,
-  useMutation,
-  useQuery,
-} from "@tanstack/react-query";
+import { getUserQueryOptions } from "@/lib/useQuery/queryOptions";
 
 export function LoginForm() {
   const {
@@ -46,7 +40,7 @@ export function LoginForm() {
   const isPending = isSignInPending || isSignUpPending;
   const error = (signInError ?? signUpError)?.error;
 
-  const handleAuth = async (type: "signIn" | "signUp") => {
+  const handleAuth = (type: "signIn" | "signUp") => {
     if (!formRef.current) return;
 
     const formData = new FormData(formRef.current);
@@ -165,7 +159,7 @@ export function SignOut(props: { username: string }) {
 }
 
 export function AuthServer() {
-  const { data: user, isLoading, error } = useQuery(getUserQueryOptions());
+  const { data: user, isLoading, error } = useQuery(getUserQueryOptions);
   if (isLoading) {
     return "...Loading";
   }
@@ -181,7 +175,7 @@ export function AuthServer() {
 }
 
 export function PlaceOrderAuth() {
-  const { data: user } = useQuery(getUserQueryOptions());
+  const { data: user } = useQuery(getUserQueryOptions);
   if (user) {
     return null;
   }
@@ -192,9 +186,3 @@ export function PlaceOrderAuth() {
     </>
   );
 }
-
-export const getUserQueryOptions = () =>
-  queryOptions({
-    queryKey: ["user"],
-    queryFn: getUser,
-  });

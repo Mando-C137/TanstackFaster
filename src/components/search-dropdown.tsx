@@ -1,60 +1,36 @@
-/* eslint-disable @next/next/no-img-element */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { X } from "lucide-react";
+import { useParams, useRouter } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Product } from "../db/schema";
 import { Link } from "@/components/ui/link";
-import { useParams, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { search } from "@/lib/search";
-
-type SearchResult = Product & { href: string };
+import { getSearchQueryOptions } from "@/lib/search";
 
 export function SearchDropdownComponent() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredItems, setFilteredItems] = useState<SearchResult[]>([]);
+  const params = useParams({ strict: false });
+
+  const [searchTerm, setSearchTerm] = useState(() => {
+    if (!params.product) {
+      const subcategory = params.subcategory;
+      return typeof subcategory === "string"
+        ? subcategory.replaceAll("-", " ")
+        : "";
+    }
+    return "";
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchFn = useServerFn(search);
 
-  // we don't need react query, we have react query at home
-  // react query at home:
-  useEffect(() => {
-    if (searchTerm.length === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFilteredItems([]);
-    } else {
-      setIsLoading(true);
-
-      const searchedFor = searchTerm;
-      searchFn({ data: searchTerm }).then(async (results) => {
-        const currentSearchTerm = inputRef.current?.value;
-        if (currentSearchTerm !== searchedFor) {
-          return;
-        }
-        setIsLoading(false);
-        setFilteredItems(results);
-      });
-    }
-  }, [searchTerm, inputRef, searchFn]);
-
-  const params = useParams({ strict: false });
-  useEffect(() => {
-    if (!params.product) {
-      const subcategory = params.subcategory;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSearchTerm(
-        typeof subcategory === "string" ? subcategory.replaceAll("-", " ") : "",
-      );
-    }
-  }, [params]);
+  const { data: filteredItems = [], isLoading } = useQuery(
+    getSearchQueryOptions(searchTerm),
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {

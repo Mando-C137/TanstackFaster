@@ -1,13 +1,10 @@
-import { Link } from "@/components/ui/link";
-import { notFound } from "@tanstack/react-router";
-import { getCategory, getCategoryProductCount } from "@/lib/queries";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { getCategory, getCategoryProductCount } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
-import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
+import { Link } from "@/components/ui/link";
 
 const loader = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((data) => data as { params: { category: string } })
   .handler(async ({ data: { params } }) => {
     const urlDecoded = decodeURIComponent(params.category);
@@ -66,7 +63,6 @@ function Page() {
                     params={{ category, subcategory: subcategory.slug }}
                   >
                     <div className="py-2">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         loading="eager"
                         decoding="sync"

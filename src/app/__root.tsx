@@ -1,21 +1,22 @@
 import {
-  Outlet,
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
+  useParams,
 } from "@tanstack/react-router";
-import { Link } from "@/components/ui/link";
-import appCss from "./globals.css?url";
-import { SearchDropdownComponent } from "@/components/search-dropdown";
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MenuIcon } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
+import appCss from "./globals.css?url";
 import { WelcomeToast } from "./welcome-toast";
-import { Cart } from "@/components/cart";
 import { AuthServer } from "./-auth.client";
 import type { QueryClient } from "@tanstack/react-query";
+import { SearchDropdownComponent } from "@/components/search-dropdown";
+import { Cart } from "@/components/cart";
+import { Link } from "@/components/ui/link";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -47,6 +48,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 );
 
 function RootLayout() {
+  const params = useParams({ strict: false });
+  const subcategoryKey =
+    typeof params.subcategory === "string" ? params.subcategory : "root";
+
   return (
     <html lang="en" className="h-full">
       <head>
@@ -77,7 +82,7 @@ function RootLayout() {
                 <NextToTanstack />
                 <div className="flex w-full flex-row items-center justify-between gap-4">
                   <div className="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
-                    <SearchDropdownComponent />
+                    <SearchDropdownComponent key={subcategoryKey} />
                   </div>
                   <div className="flex flex-row justify-between space-x-4">
                     <div className="relative">

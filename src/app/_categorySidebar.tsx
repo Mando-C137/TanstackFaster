@@ -1,6 +1,6 @@
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { Link } from "@/components/ui/link";
 import { getCollections } from "@/lib/queries";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_categorySidebar")({
   loader: async () => {

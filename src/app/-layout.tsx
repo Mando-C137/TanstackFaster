@@ -1,19 +1,17 @@
 // import type { Metadata } from "next";
 import "./globals.css";
-import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { MenuIcon } from "lucide-react";
 import React, { Suspense } from "react";
-import { Cart } from "@/components/cart";
-import { AuthServer } from "./-auth.client";
-import { Link } from "@/components/ui/link";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "sonner";
-import { WelcomeToast } from "./welcome-toast";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { WelcomeToast } from "./welcome-toast";
+import { AuthServer } from "./-auth.client";
+import { SearchDropdownComponent } from "@/components/search-dropdown";
 
-export const metadata /*:Metadata*/ = {
+export const metadata /* :Metadata*/ = {
   title: {
     template: "%s | NextFaster",
     default: "NextFaster",
@@ -21,7 +19,7 @@ export const metadata /*:Metadata*/ = {
   description: "A performant site built with Next.js",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -31,7 +29,7 @@ export default async function RootLayout({
       authComponent={<AuthServer />}
       cartComponent={
         null
-        //< Cart />
+        // < Cart />
       }
     >
       {children}
@@ -39,7 +37,7 @@ export default async function RootLayout({
   );
 }
 
-async function CachedLayout({
+function CachedLayout({
   children,
   authComponent,
   cartComponent,

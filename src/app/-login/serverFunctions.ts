@@ -1,16 +1,16 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { NewUser, users } from "@/db/schema";
-import { comparePasswords, hashPassword, setSession } from "@/lib/session";
-// import { authRateLimit, signUpRateLimit } from "@/lib/rate-limit";
 import { createServerFn } from "@tanstack/react-start";
 import {
   clearSession,
   deleteCookie,
   getCookies,
-  getRequestHeader,
 } from "@tanstack/react-start/server";
+import type { NewUser } from "@/db/schema";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { comparePasswords, hashPassword, setSession } from "@/lib/session";
+// import { authRateLimit, signUpRateLimit } from "@/lib/rate-limit";
 
 const authSchema = (formData: FormData) => {
   const data = Object.fromEntries(formData.entries());
@@ -26,7 +26,7 @@ export const signUp = createServerFn({ method: "POST" })
   .inputValidator(authSchema)
   .handler(async ({ data }) => {
     const { username, password } = data;
-    const ip = getRequestHeader("x-real-ip") ?? "local";
+    // const ip = getRequestHeader("x-real-ip") ?? "local";
     // const rl2 = await signUpRateLimit.limit(ip);
     // if (!rl2.success) {
     //   return {
@@ -56,6 +56,7 @@ export const signUp = createServerFn({ method: "POST" })
 
     const [createdUser] = await db.insert(users).values(newUser).returning();
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!createdUser) {
       return { error: "Failed to create user. Please try again." };
     }
@@ -66,7 +67,7 @@ export const signIn = createServerFn({ method: "POST" })
   .inputValidator(authSchema)
   .handler(async ({ data }) => {
     const { username, password } = data;
-    const ip = getRequestHeader("x-real-ip") ?? "local";
+    // const ip = getRequestHeader("x-real-ip") ?? "local";
     // const rl = await authRateLimit.limit(ip);
 
     // if (!rl.success) {
@@ -102,7 +103,7 @@ export const signIn = createServerFn({ method: "POST" })
     await setSession(foundUser);
   });
 
-export const signOut = createServerFn({ method: "POST" }).handler(async () => {
+export const signOut = createServerFn({ method: "POST" }).handler(() => {
   // clear session & cart
   const c = getCookies();
 

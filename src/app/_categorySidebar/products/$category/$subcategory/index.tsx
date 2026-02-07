@@ -1,11 +1,11 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { alt, contentType, size } from "./og";
 import { ProductLink } from "@/components/ui/product-card";
 import {
   getProductsForSubcategory,
   getSubcategory,
   getSubcategoryProductCount,
 } from "@/lib/queries";
-import { contentType, alt, size } from "./og";
 import { cacheHeadersFn } from "@/lib/cache";
 import { env } from "@/env";
 
@@ -35,6 +35,7 @@ export const Route = createFileRoute(
       getSubcategoryProductCount({ data: urlDecodedSubcategory }),
     ]);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!products) {
       throw notFound();
     }
@@ -64,7 +65,7 @@ export const Route = createFileRoute(
     const schema = import.meta.env.DEV ? "http" : "https";
     const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
 
-    if (!host || !schema) {
+    if (!host) {
       return {};
     }
     const url = `${schema}://${host}/products/${params.category}/${params.subcategory}`;
@@ -74,9 +75,9 @@ export const Route = createFileRoute(
         { title: `${subcategory.name} | TanstackFaster` },
         { name: "description", content: description },
         { name: "og:title", content: subcategory.name },
-        // { name: "og:url", content: url },
+        { name: "og:url", content: url },
         { name: "og:description", content: subcategory.name },
-        // { name: "og:image:url", content: `${url}/og` },
+        { name: "og:image:url", content: `${url}/og` },
         { name: "og:image:type", content: contentType },
         { name: "og:image:width", content: `${size.width}` },
         { name: "og:image:height", content: `${size.height}` },

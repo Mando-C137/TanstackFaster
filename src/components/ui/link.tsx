@@ -1,9 +1,6 @@
-import {
-  Link as TanstackStartLink,
-  type LinkProps,
-} from "@tanstack/react-router";
-import { useRouter } from "@tanstack/react-router";
+import { Link as TanstackStartLink, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
+import type { LinkProps } from "@tanstack/react-router";
 
 type PrefetchImage = {
   srcset: string;
@@ -30,11 +27,11 @@ async function prefetchImages(href: string) {
     throw new Error("Failed to prefetch images");
   }
   const { images } = await imageResponse.json();
-  return images as PrefetchImage[];
+  return images as Array<PrefetchImage>;
 }
 
 const seen = new Set<string>();
-const imageCache = new Map<string, PrefetchImage[]>();
+const imageCache = new Map<string, Array<PrefetchImage>>();
 
 export const Link = (({ children, ...props }: LinkProps) => {
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -127,6 +124,7 @@ function prefetchImage(image: PrefetchImage) {
   img.sizes = image.sizes;
   seen.add(image.srcset);
   img.srcset = image.srcset;
+  console.log(image.src);
   img.src = image.src;
   img.alt = image.alt;
 }

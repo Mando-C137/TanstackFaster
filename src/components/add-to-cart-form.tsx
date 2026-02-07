@@ -1,5 +1,5 @@
-import { addToCart } from "@/lib/actions";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
+import { addToCart } from "@/lib/actions";
 
 export function AddToCartForm({ productSlug }: { productSlug: string }) {
   const {

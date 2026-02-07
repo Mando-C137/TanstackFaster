@@ -1,9 +1,10 @@
-import { NewUser } from "@/db/schema";
-import { env } from "@/env";
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import pkg from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+import type { NewUser } from "@/db/schema";
+import { env } from "@/env";
+
 const { compare, hash } = pkg;
 
 const getKey = createServerFn().handler(() => {

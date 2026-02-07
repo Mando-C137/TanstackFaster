@@ -1,7 +1,7 @@
-import { db } from "@/db";
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { db } from "@/db";
 
 const cartSchema = z.array(
   z.object({
@@ -13,7 +13,7 @@ const cartSchema = z.array(
 export type CartItem = z.infer<typeof cartSchema>[number];
 
 export const updateCart = createServerFn()
-  .inputValidator((a: CartItem[]) => a)
+  .inputValidator((a: Array<CartItem>) => a)
   .handler(({ data }) => {
     setCookie("cart", JSON.stringify(data), {
       httpOnly: true,
@@ -40,9 +40,9 @@ export const detailedCart = createServerFn().handler(async () => {
   const cart = await getCart();
 
   const products = await db.query.products.findMany({
-    where: (products, { inArray }) =>
+    where: (productsB, { inArray }) =>
       inArray(
-        products.slug,
+        productsB.slug,
         cart.map((item) => item.productSlug),
       ),
     with: {

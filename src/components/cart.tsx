@@ -1,6 +1,6 @@
-import { getCart } from "@/lib/cart";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { getCart } from "@/lib/cart";
 
 export function Cart() {
   const getCartFn = useServerFn(getCart);
@@ -9,7 +9,7 @@ export function Cart() {
     queryKey: ["cart"],
     queryFn: () => getCartFn(),
   });
-  if (!cart || cart?.length == 0) {
+  if (!cart || cart.length == 0) {
     return null;
   }
   const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);

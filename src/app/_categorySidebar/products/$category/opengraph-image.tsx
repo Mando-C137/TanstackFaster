@@ -1,6 +1,5 @@
-// import { notFound } from "next/navigation";
-import { getCategory } from "@/lib/queries";
 import { notFound } from "@tanstack/react-router";
+import { getCategory } from "@/lib/queries";
 import { loadFont } from "@/lib/utils.server";
 
 // Route segment config
@@ -74,7 +73,6 @@ export default async function Image(props: {
             justifyContent: "center",
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             style={{
               width: "300px",

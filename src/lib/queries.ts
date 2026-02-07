@@ -1,18 +1,16 @@
+import { and, count, eq, sql } from "drizzle-orm";
+import { createServerFn } from "@tanstack/react-start";
+import { getCookie } from "@tanstack/react-start/server";
 import { verifyToken } from "./session";
+import { cacheLife } from "./cache";
 import {
   categories,
-  products,
+  products as productsDrizzle,
   subcategories,
   subcollections,
   users,
 } from "@/db/schema";
 import { db } from "@/db";
-import { eq, and, count } from "drizzle-orm";
-import { createServerFn } from "@tanstack/react-start";
-import { getCookie } from "@tanstack/react-start/server";
-import { sql } from "drizzle-orm";
-import { cacheLife } from "./cache";
-import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 export const getUser = createServerFn().handler(async () => {
   const sessionCookie = getCookie("session");
@@ -22,7 +20,9 @@ export const getUser = createServerFn().handler(async () => {
 
   const sessionData = await verifyToken(sessionCookie);
   if (
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     !sessionData ||
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     !sessionData.user ||
     typeof sessionData.user.id !== "number"
   ) {
@@ -47,7 +47,6 @@ export const getUser = createServerFn().handler(async () => {
 });
 
 export const getProductsForSubcategory = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({
     subcategorySlug,
   }))
@@ -55,34 +54,31 @@ export const getProductsForSubcategory = createServerFn()
     cacheLife("hours");
 
     return db.query.products.findMany({
-      where: (products, { eq, and }) =>
-        and(eq(products.subcategory_slug, subcategorySlug)),
-      orderBy: (products, { asc }) => asc(products.slug),
+      where: (products, { eq: equal, and: andP }) =>
+        andP(equal(products.subcategory_slug, subcategorySlug)),
+      orderBy: (productsB, { asc }) => asc(productsB.slug),
     });
   });
 
-export const getCollections = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
-  .handler(async () => {
-    cacheLife("hours");
+export const getCollections = createServerFn().handler(async () => {
+  cacheLife("hours");
 
-    return db.query.collections.findMany({
-      with: {
-        categories: true,
-      },
-      orderBy: (collections, { asc }) => asc(collections.name),
-    });
+  return db.query.collections.findMany({
+    with: {
+      categories: true,
+    },
+    orderBy: (collections, { asc }) => asc(collections.name),
   });
+});
 
 export const getProductDetails = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((productSlug: string) => ({
     productSlug,
   }))
   .handler(async ({ data: { productSlug } }) => {
     cacheLife("hours");
     return db.query.products.findFirst({
-      where: (products, { eq }) => eq(products.slug, productSlug),
+      where: (products, { eq: equal }) => equal(products.slug, productSlug),
     });
   });
 
@@ -93,19 +89,20 @@ export const getSubcategory = createServerFn()
   .handler(async ({ data: { subcategorySlug } }) => {
     cacheLife("hours");
     return db.query.subcategories.findFirst({
-      where: (subcategories, { eq }) => eq(subcategories.slug, subcategorySlug),
+      where: (subcategoriesB, { eq: equal }) =>
+        equal(subcategoriesB.slug, subcategorySlug),
     });
   });
 
 export const getCategory = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({
     categorySlug,
   }))
   .handler(async ({ data: { categorySlug } }) => {
     cacheLife("hours");
     return db.query.categories.findFirst({
-      where: (categories, { eq }) => eq(categories.slug, categorySlug),
+      where: (categoriesB, { eq: equal }) =>
+        equal(categoriesB.slug, categorySlug),
       with: {
         subcollections: {
           with: {
@@ -117,7 +114,6 @@ export const getCategory = createServerFn()
   });
 
 export const getCollectionDetails = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((collectionSlug: string) => ({
     collectionSlug,
   }))
@@ -127,19 +123,19 @@ export const getCollectionDetails = createServerFn()
       with: {
         categories: true,
       },
-      where: (collections, { eq }) => eq(collections.slug, collectionSlug),
+      where: (collections, { eq: equal }) =>
+        equal(collections.slug, collectionSlug),
       orderBy: (collections, { asc }) => asc(collections.slug),
     });
   });
 
 export const getProductCount = createServerFn().handler(async () => {
   cacheLife("hours");
-  return db.select({ count: count() }).from(products);
+  return db.select({ count: count() }).from(productsDrizzle);
 });
 
 // // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((categorySlug: string) => ({ categorySlug }))
   .handler(async ({ data: { categorySlug } }) => {
     cacheLife("hours");
@@ -154,19 +150,21 @@ export const getCategoryProductCount = createServerFn()
         subcategories,
         eq(subcollections.id, subcategories.subcollection_id),
       )
-      .leftJoin(products, eq(subcategories.slug, products.subcategory_slug))
+      .leftJoin(
+        productsDrizzle,
+        eq(subcategories.slug, productsDrizzle.subcategory_slug),
+      )
       .where(eq(categories.slug, categorySlug));
   });
 
 export const getSubcategoryProductCount = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((subcategorySlug: string) => ({ subcategorySlug }))
   .handler(async ({ data: { subcategorySlug } }) => {
     cacheLife("hours");
     return db
       .select({ count: count() })
-      .from(products)
-      .where(eq(products.subcategory_slug, subcategorySlug));
+      .from(productsDrizzle)
+      .where(eq(productsDrizzle.subcategory_slug, subcategorySlug));
   });
 
 export const getSearchResults = createServerFn()
@@ -181,12 +179,12 @@ export const getSearchResults = createServerFn()
       // If the search term is short (e.g., "W"), use ILIKE for prefix matching
       results = await db
         .select()
-        .from(products)
-        .where(sql`${products.name} ILIKE ${searchTerm + "%"}`) // Prefix match
+        .from(productsDrizzle)
+        .where(sql`${productsDrizzle.name} ILIKE ${searchTerm + "%"}`) // Prefix match
         .limit(5)
         .innerJoin(
           subcategories,
-          sql`${products.subcategory_slug} = ${subcategories.slug}`,
+          sql`${productsDrizzle.subcategory_slug} = ${subcategories.slug}`,
         )
         .innerJoin(
           subcollections,
@@ -206,14 +204,14 @@ export const getSearchResults = createServerFn()
 
       results = await db
         .select()
-        .from(products)
+        .from(productsDrizzle)
         .where(
-          sql`to_tsvector('english', ${products.name}) @@ to_tsquery('english', ${formattedSearchTerm})`,
+          sql`to_tsvector('english', ${productsDrizzle.name}) @@ to_tsquery('english', ${formattedSearchTerm})`,
         )
         .limit(5)
         .innerJoin(
           subcategories,
-          sql`${products.subcategory_slug} = ${subcategories.slug}`,
+          sql`${productsDrizzle.subcategory_slug} = ${subcategories.slug}`,
         )
         .innerJoin(
           subcollections,

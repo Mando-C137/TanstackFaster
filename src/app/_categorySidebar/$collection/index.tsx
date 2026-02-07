@@ -1,16 +1,14 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { Link } from "@/components/ui/link";
 import { getCollectionDetails } from "@/lib/queries";
-import { createFileRoute } from "@tanstack/react-router";
 import { cacheHeadersFn } from "@/lib/cache";
-import { createServerFn } from "@tanstack/react-start";
-import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 
 // export async function generateStaticParams() {
 //   return await db.collect({ collection: collections.slug }).from(collections);
 // }
 
 const loader = createServerFn()
-  //  .middleware([staticFunctionMiddleware])
   .inputValidator((data) => data as { params: { collection: string } })
   .handler(async ({ data: { params } }) => {
     const collectionName = decodeURIComponent(params.collection);
@@ -42,7 +40,6 @@ function Home() {
                 to={"/products/$category"}
                 params={{ category: category.slug }}
               >
-                {/* eslint-disable @next/next/no-img-element */}
                 <img
                   loading={imageCount++ < 15 ? "eager" : "lazy"}
                   decoding="sync"

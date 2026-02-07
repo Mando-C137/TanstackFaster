@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql  } from "drizzle-orm";
 import {
   index,
   integer,
@@ -9,7 +9,6 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
 
 export const collections = pgTable("collections", {
   id: serial("id").primaryKey(),

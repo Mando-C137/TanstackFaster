@@ -1,6 +1,7 @@
+import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { getSearchResults } from "@/lib/queries";
 import { setResponseHeader } from "@tanstack/react-start/server";
+import { getSearchResults } from "@/lib/queries";
 
 export const search = createServerFn({ method: "GET" })
   .inputValidator((searchTerm: string) => ({ searchTerm }))
@@ -23,7 +24,7 @@ export const search = createServerFn({ method: "GET" })
     return searchResults;
   });
 
-export type ProductSearchResult = {
+export type ProductSearchResult = Array<{
   href: string;
   name: string;
   slug: string;
@@ -31,4 +32,15 @@ export type ProductSearchResult = {
   description: string;
   price: string;
   subcategory_slug: string;
-}[];
+}>;
+
+export const getSearchQueryOptions = (searchTerm: string) =>
+  queryOptions({
+    queryKey: ["search", searchTerm],
+    queryFn: async () => {
+      const results = await search({ data: searchTerm });
+      return results;
+    },
+    enabled: searchTerm.length > 0,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+  });

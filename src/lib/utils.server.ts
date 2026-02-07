@@ -1,6 +1,6 @@
-import { createServerOnlyFn } from "@tanstack/react-start";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const loadFont = createServerOnlyFn(
   (name: "geist-sans-latin-400-normal.ttf") => {

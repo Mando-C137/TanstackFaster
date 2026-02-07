@@ -31,7 +31,7 @@ export const Route = createFileRoute("/api/prefetch-images/$")({
             alt: img.getAttribute("alt"),
             loading: img.getAttribute("loading"),
           }))
-          .filter((img) => img.src);
+          .filter((img) => img.src && img.src != "null");
         return Response.json(
           { images },
           {

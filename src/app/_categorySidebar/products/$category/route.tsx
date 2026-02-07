@@ -1,5 +1,5 @@
+import { Outlet, createFileRoute, notFound } from "@tanstack/react-router";
 import { getCategory } from "@/lib/queries";
-import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_categorySidebar/products/$category")({
   component: Layout,
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_categorySidebar/products/$category")({
     }
     return { category };
   },
-  head: async ({ loaderData }) => {
+  head: ({ loaderData }) => {
     if (!loaderData) {
       return {};
     }

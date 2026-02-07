@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { OrderHistoryDynamic } from "./-dynamic";
 import { Suspense } from "react";
+import { OrderHistoryDynamic } from "./-dynamic";
 
 export const Route = createFileRoute("/order-history/")({
   head: () => ({

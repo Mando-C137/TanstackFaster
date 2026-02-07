@@ -1,11 +1,11 @@
-import { detailedCart } from "@/lib/cart";
+import { X } from "lucide-react";
+import type { detailedCart } from "@/lib/cart";
 import { Link } from "@/components/ui/link";
 import { removeFromCart } from "@/lib/actions";
-import { X } from "lucide-react";
 
 type CartItem = Awaited<ReturnType<typeof detailedCart>>[number];
 
-export function CartItems({ cart }: { cart: CartItem[] }) {
+export function CartItems({ cart }: { cart: Array<CartItem> }) {
   return (
     <>
       {cart.length > 0 && (
@@ -27,9 +27,6 @@ export function CartItems({ cart }: { cart: CartItem[] }) {
   );
 }
 function CartItem({ product }: { product: CartItem }) {
-  if (!product) {
-    return null;
-  }
   // limit to 2 decimal places
   const cost = (Number(product.price) * product.quantity).toFixed(2);
   return (
@@ -45,7 +42,6 @@ function CartItem({ product }: { product: CartItem }) {
       >
         <div className="flex flex-row space-x-2">
           <div className="flex h-24 w-24 items-center justify-center bg-gray-100">
-            {/*    eslint-disable-next-line @next/next/no-img-element */}
             <img
               loading="eager"
               decoding="sync"
@@ -85,7 +81,7 @@ function CartItem({ product }: { product: CartItem }) {
   );
 }
 
-export function TotalCost({ cart }: { cart: CartItem[] }) {
+export function TotalCost({ cart }: { cart: Array<CartItem> }) {
   const totalCost = cart.reduce(
     (acc, item) => acc + item.quantity * Number(item.price),
     0,

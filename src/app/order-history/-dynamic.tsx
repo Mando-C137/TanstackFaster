@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserQueryOptions } from "../-auth.client";
+import { getUserQueryOptions } from "@/lib/useQuery/queryOptions";
 
 export function OrderHistoryDynamic() {
-  const { data: user } = useQuery(getUserQueryOptions());
+  const { data: user } = useQuery(getUserQueryOptions);
   return user ? (
     <div className="border-t border-gray-200 pt-4">
       <table className="w-full">

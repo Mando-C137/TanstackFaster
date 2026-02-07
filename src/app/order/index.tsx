@@ -5,6 +5,10 @@ import { CartItems, TotalCost } from "./-dynamic";
 import { detailedCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/order/")({
+  loader: async () => {
+    const cart = await detailedCart();
+    return { cart };
+  },
   head: () => ({
     meta: [
       {
@@ -12,10 +16,6 @@ export const Route = createFileRoute("/order/")({
       },
     ],
   }),
-  loader: async () => {
-    const cart = await detailedCart();
-    return { cart };
-  },
   component: RouteComponent,
 });
 

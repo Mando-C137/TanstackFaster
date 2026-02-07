@@ -17,6 +17,6 @@
     },
     "target": "ES2017"
   },
-  "include": ["**/*.ts", "**/*.tsx", "eslint.config.mjs", "src"],
+  "include": ["**/*.ts", "**/*.tsx", "eslint.config.js", "src"],
   "exclude": ["node_modules"]
 }
