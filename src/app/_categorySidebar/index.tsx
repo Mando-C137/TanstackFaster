@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { Link } from "@/components/ui/link";
 import { cacheHeadersFn, cacheLife } from "@/lib/cache";
@@ -26,7 +26,9 @@ function Home() {
   return (
     <div className="w-full p-4">
       <div className="border-accent1 mb-2 w-full flex-grow border-b-[1px] text-sm font-semibold text-black">
-        Explore {productCount.at(0)?.count.toLocaleString()} products
+        <ClientOnly fallback={productCount.at(0)?.count}>
+          Explore {productCount.at(0)?.count.toLocaleString()} products
+        </ClientOnly>
       </div>
       {collections.map((collection, collectionIndex) => {
         let categoryOffset = 0;
