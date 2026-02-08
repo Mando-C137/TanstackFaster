@@ -37,6 +37,7 @@ export const Route = createFileRoute(
       meta: [
         { title: `${product.name} | TanstackFaster` },
         { name: "og:title", content: product.name },
+        { name: "description", content: product.description },
         { name: "og:description", content: product.description },
         { name: "og:url", content: url },
         { name: "og:image:url", content: `${url}og` },

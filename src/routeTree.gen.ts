@@ -20,6 +20,7 @@ import { Route as CategorySidebarCollectionIndexRouteImport } from './app/_categ
 import { Route as ApiPrefetchImagesSplatRouteImport } from './app/api/prefetch-images/$'
 import { Route as CategorySidebarProductsCategoryRouteRouteImport } from './app/_categorySidebar/products/$category/route'
 import { Route as CategorySidebarProductsCategoryIndexRouteImport } from './app/_categorySidebar/products/$category/index'
+import { Route as CategorySidebarProductsCategoryOgRouteImport } from './app/_categorySidebar/products/$category/og'
 import { Route as CategorySidebarProductsCategorySubcategoryIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/index'
 import { Route as CategorySidebarProductsCategorySubcategoryOgIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/og/index'
 import { Route as CategorySidebarProductsCategorySubcategoryProductIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/$product/index'
@@ -83,6 +84,12 @@ const CategorySidebarProductsCategoryIndexRoute =
     path: '/',
     getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
   } as any)
+const CategorySidebarProductsCategoryOgRoute =
+  CategorySidebarProductsCategoryOgRouteImport.update({
+    id: '/og',
+    path: '/og',
+    getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
+  } as any)
 const CategorySidebarProductsCategorySubcategoryIndexRoute =
   CategorySidebarProductsCategorySubcategoryIndexRouteImport.update({
     id: '/$subcategory/',
@@ -118,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/$collection/': typeof CategorySidebarCollectionIndexRoute
   '/products/': typeof CategorySidebarProductsIndexRoute
   '/api/debug/': typeof ApiDebugIndexRoute
+  '/products/$category/og': typeof CategorySidebarProductsCategoryOgRoute
   '/products/$category/': typeof CategorySidebarProductsCategoryIndexRoute
   '/products/$category/$subcategory/': typeof CategorySidebarProductsCategorySubcategoryIndexRoute
   '/products/$category/$subcategory/$product/': typeof CategorySidebarProductsCategorySubcategoryProductIndexRoute
@@ -133,6 +141,7 @@ export interface FileRoutesByTo {
   '/$collection': typeof CategorySidebarCollectionIndexRoute
   '/products': typeof CategorySidebarProductsIndexRoute
   '/api/debug': typeof ApiDebugIndexRoute
+  '/products/$category/og': typeof CategorySidebarProductsCategoryOgRoute
   '/products/$category': typeof CategorySidebarProductsCategoryIndexRoute
   '/products/$category/$subcategory': typeof CategorySidebarProductsCategorySubcategoryIndexRoute
   '/products/$category/$subcategory/$product': typeof CategorySidebarProductsCategorySubcategoryProductIndexRoute
@@ -151,6 +160,7 @@ export interface FileRoutesById {
   '/_categorySidebar/$collection/': typeof CategorySidebarCollectionIndexRoute
   '/_categorySidebar/products/': typeof CategorySidebarProductsIndexRoute
   '/api/debug/': typeof ApiDebugIndexRoute
+  '/_categorySidebar/products/$category/og': typeof CategorySidebarProductsCategoryOgRoute
   '/_categorySidebar/products/$category/': typeof CategorySidebarProductsCategoryIndexRoute
   '/_categorySidebar/products/$category/$subcategory/': typeof CategorySidebarProductsCategorySubcategoryIndexRoute
   '/_categorySidebar/products/$category/$subcategory/$product/': typeof CategorySidebarProductsCategorySubcategoryProductIndexRoute
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/$collection/'
     | '/products/'
     | '/api/debug/'
+    | '/products/$category/og'
     | '/products/$category/'
     | '/products/$category/$subcategory/'
     | '/products/$category/$subcategory/$product/'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/$collection'
     | '/products'
     | '/api/debug'
+    | '/products/$category/og'
     | '/products/$category'
     | '/products/$category/$subcategory'
     | '/products/$category/$subcategory/$product'
@@ -201,6 +213,7 @@ export interface FileRouteTypes {
     | '/_categorySidebar/$collection/'
     | '/_categorySidebar/products/'
     | '/api/debug/'
+    | '/_categorySidebar/products/$category/og'
     | '/_categorySidebar/products/$category/'
     | '/_categorySidebar/products/$category/$subcategory/'
     | '/_categorySidebar/products/$category/$subcategory/$product/'
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySidebarProductsCategoryIndexRouteImport
       parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
     }
+    '/_categorySidebar/products/$category/og': {
+      id: '/_categorySidebar/products/$category/og'
+      path: '/og'
+      fullPath: '/products/$category/og'
+      preLoaderRoute: typeof CategorySidebarProductsCategoryOgRouteImport
+      parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
+    }
     '/_categorySidebar/products/$category/$subcategory/': {
       id: '/_categorySidebar/products/$category/$subcategory/'
       path: '/$subcategory'
@@ -328,6 +348,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface CategorySidebarProductsCategoryRouteRouteChildren {
+  CategorySidebarProductsCategoryOgRoute: typeof CategorySidebarProductsCategoryOgRoute
   CategorySidebarProductsCategoryIndexRoute: typeof CategorySidebarProductsCategoryIndexRoute
   CategorySidebarProductsCategorySubcategoryIndexRoute: typeof CategorySidebarProductsCategorySubcategoryIndexRoute
   CategorySidebarProductsCategorySubcategoryProductIndexRoute: typeof CategorySidebarProductsCategorySubcategoryProductIndexRoute
@@ -337,6 +358,8 @@ interface CategorySidebarProductsCategoryRouteRouteChildren {
 
 const CategorySidebarProductsCategoryRouteRouteChildren: CategorySidebarProductsCategoryRouteRouteChildren =
   {
+    CategorySidebarProductsCategoryOgRoute:
+      CategorySidebarProductsCategoryOgRoute,
     CategorySidebarProductsCategoryIndexRoute:
       CategorySidebarProductsCategoryIndexRoute,
     CategorySidebarProductsCategorySubcategoryIndexRoute:

@@ -1,8 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { alt, contentType, size } from "./og";
 import { getCategory, getCategoryProductCount } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
 import { Link } from "@/components/ui/link";
+import { getURL } from "@/lib/utils";
 
 const loader = createServerFn()
   .inputValidator((data) => data as { params: { category: string } })
@@ -25,7 +27,37 @@ export const Route = createFileRoute("/_categorySidebar/products/$category/")({
     return data;
   },
   component: Page,
-  head: ({ loaderData }) => ({ meta: [{ name: loaderData?.cat.name }] }),
+  head: ({ loaderData, match: { pathname } }) => {
+    const url = `${getURL()}${pathname}`;
+
+    const category = loaderData?.cat;
+    const examples = loaderData?.cat.subcollections
+      .slice(0, 2)
+      .map((s) => s.name)
+      .join(", ");
+
+    const description = `Choose from our selection of ${category?.name}, including ${examples + (!!category && category.subcollections.length > 1 ? `,` : ``)} and more. In stock and ready to ship.`;
+
+    return {
+      meta: [
+        { title: `${loaderData?.cat.name} | TanstackFaster` },
+        { name: "description", content: description },
+        {
+          name: "og:description",
+          content: description,
+        },
+
+        { name: "og:title", content: loaderData?.cat.name },
+        { name: "og:url", content: url },
+        { name: "og:description", content: description },
+        { name: "og:image:url", content: `${url}og` },
+        { name: "og:image:type", content: contentType },
+        { name: "og:image:width", content: `${size.width}` },
+        { name: "og:image:height", content: `${size.height}` },
+        { name: "og:image:alt", content: alt },
+      ],
+    };
+  },
   headers: cacheHeadersFn("hours"),
 });
 

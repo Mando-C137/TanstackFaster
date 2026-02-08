@@ -26,7 +26,7 @@ function Home() {
   return (
     <div className="w-full p-4">
       <div className="border-accent1 mb-2 w-full flex-grow border-b-[1px] text-sm font-semibold text-black">
-        <ClientOnly fallback={productCount.at(0)?.count}>
+        <ClientOnly fallback={`Explore ${productCount.at(0)?.count} products`}>
           Explore {productCount.at(0)?.count.toLocaleString()} products
         </ClientOnly>
       </div>

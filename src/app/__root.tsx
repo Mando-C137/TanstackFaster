@@ -11,7 +11,7 @@ import { MenuIcon } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import appCss from "./globals.css?url";
-import { WelcomeToast } from "./welcome-toast";
+import { WelcomeToast } from "./-welcome-toast";
 import { AuthServer } from "./-auth.client";
 import type { QueryClient } from "@tanstack/react-query";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
@@ -32,7 +32,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           },
           {
             title: "TanStackFaster",
-            description: "A performant site built with TanstackStart",
+          },
+          {
+            name: "description",
+            content: `A performant site built with TanstackStart`,
           },
           { name: "og:title", content: "TanStackFaster" },
           {
@@ -41,7 +44,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           },
           {
             name: "og:url",
-            content: `${url}/opengraph-image.png`,
+            content: `${url}`,
           },
           {
             name: "og:image:url",

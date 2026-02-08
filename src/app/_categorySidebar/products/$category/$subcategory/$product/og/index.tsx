@@ -20,7 +20,7 @@ export const Route = createFileRoute(
   }),
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
         const { product } = params;
         const urlDecodedProduct = decodeURIComponent(product);
         const productData = await getProductDetails({
@@ -31,8 +31,11 @@ export const Route = createFileRoute(
           throw notFound();
         }
 
+        const url = new URL(request.url);
+        const schemaHost = `${url.protocol}//${url.host}`;
+
         if (!process.env.VERCEL) {
-          return Response.redirect("/opengraph-image", 302);
+          return Response.redirect(`${schemaHost}/opengraph-image.png`, 302);
         }
 
         return generateOGImage({

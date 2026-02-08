@@ -19,7 +19,7 @@ export const Route = createFileRoute(
   headers: cacheHeadersFn("hours"),
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
         const { subcategory: subcategoryParam } = params;
         const urlDecodedCategory = decodeURIComponent(subcategoryParam);
 
@@ -33,8 +33,11 @@ export const Route = createFileRoute(
 
         const description = `Choose from our selection of ${subcategory.name}. In stock and ready to ship.`;
 
+        const url = new URL(request.url);
+        const schemaHost = `${url.protocol}//${url.host}`;
+
         if (!process.env.VERCEL) {
-          return Response.redirect("/opengraph-image", 302);
+          return Response.redirect(`${schemaHost}/opengraph-image.png`, 302);
         }
 
         // TODO: Change design to add subcategory images that blur out
