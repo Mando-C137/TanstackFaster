@@ -126,8 +126,8 @@ textarea {
   transform-origin: center center;
 }
 
-/* On hover, rotate forward to show NextFaster */
-.group:hover .logo-cube {
+/* Programmatic flip to show NextFaster */
+.logo-cube.is-flipped {
   transform: rotateX(-90deg);
 }
 

@@ -4,6 +4,7 @@ import {
   Scripts,
   createRootRouteWithContext,
   useParams,
+  useRouter,
 } from "@tanstack/react-router";
 // import { Analytics } from "@vercel/analytics/react";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -13,6 +14,7 @@ import { Toaster } from "sonner";
 import appCss from "./globals.css?url";
 import { WelcomeToast } from "./-welcome-toast";
 import { AuthServer } from "./-auth.client";
+import type { MouseEvent } from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { Cart } from "@/components/cart";
@@ -98,7 +100,6 @@ function RootLayout() {
                 </Suspense>
               </div>
               <div className="flex w-full flex-col items-start justify-center sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-                {/* <NextToTanstack /> */}
                 <NextToTanstack />
                 <div className="flex w-full flex-row items-center justify-between gap-4">
                   <div className="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
@@ -179,15 +180,63 @@ function RootLayout() {
 }
 
 function NextToTanstack() {
+  const router = useRouter();
+  const [isFlipped, setIsFlipped] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsFlipped(false);
+      setHasMounted(true);
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isHovering || !hasMounted) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setIsFlipped((prev) => !prev);
+    }, 1_500);
+
+    return () => clearInterval(interval);
+  }, [hasMounted, isHovering]);
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+    setIsFlipped(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    setIsFlipped(false);
+  };
+
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (isFlipped) {
+      return;
+    }
+
+    e.preventDefault();
+    router.navigate({ to: "/" });
+  };
+
   return (
     <a
-      href="https://next-faster.vercel.app"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-accent1 group flex items-center text-4xl font-bold"
+      href={isFlipped ? "https://next-faster.vercel.app" : "/"}
+      target={isFlipped ? "_blank" : undefined}
+      rel={isFlipped ? "noopener noreferrer" : undefined}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="text-accent1 flex items-center text-4xl font-bold"
     >
       <div className="logo-cube-container">
-        <div className="logo-cube">
+        <div className={`logo-cube ${isFlipped ? "is-flipped" : ""}`}>
           {/* Front face: TanstackFaster (default) */}
           <span className="logo-face logo-face-front">TanstackFaster</span>
           {/* Bottom face: NextFaster (shown on hover) */}
@@ -195,42 +244,5 @@ function NextToTanstack() {
         </div>
       </div>
     </a>
-  );
-}
-
-export default function CylinderLink() {
-  const [flipped, setFlipped] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setFlipped(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div className="text-accent1 flex items-center justify-center overflow-hidden">
-      {/* Centered wrapper with equal perspective from center */}
-      <div className="relative flex justify-center perspective-[1000px]">
-        <Link
-          to="/"
-          className="relative inline-block h-10 w-[15ch] text-center text-4xl font-bold"
-        >
-          <div
-            className={`relative h-full w-full transition-transform duration-1000 transform-3d ${
-              flipped ? "transform-[rotateX(90deg)]" : ""
-            }`}
-          >
-            {/* Front Face */}
-            <span className="absolute inset-0 flex h-full w-full transform-[translateZ(1.25rem)] items-center justify-center rounded-md backface-hidden">
-              NextFaster
-            </span>
-
-            {/* Bottom Face */}
-            <span className="absolute inset-0 flex h-full w-full transform-[rotateX(-90deg)_translateZ(1.25rem)] items-center justify-center rounded-md backface-hidden">
-              TanstackFaster
-            </span>
-          </div>
-        </Link>
-      </div>
-    </div>
   );
 }
