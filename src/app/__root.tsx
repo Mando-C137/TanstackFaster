@@ -6,8 +6,10 @@ import {
   useParams,
   useRouter,
 } from "@tanstack/react-router";
-// import { Analytics } from "@vercel/analytics/react";
-// import { SpeedInsights } from "@vercel/speed-insights/next";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+// import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics } from "@vercel/analytics/react";
 import { MenuIcon } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
@@ -170,9 +172,10 @@ function RootLayout() {
           <Toaster closeButton />
           <WelcomeToast />
         </Suspense>
-        {/* <Analytics scriptSrc="/insights/events.js" endpoint="/hfi/events" />
-        <SpeedInsights /> */}
-
+        <Analytics />
+        {/* <SpeedInsights /> 
+         <ReactQueryDevtools buttonPosition="bottom-left" />
+        <TanStackRouterDevtools position="bottom-right" /> */}
         <Scripts />
       </body>
     </html>

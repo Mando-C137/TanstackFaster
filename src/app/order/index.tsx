@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { PlaceOrderAuth } from "../-auth";
 import { CartItems, TotalCost } from "./-dynamic";
 import { detailedCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/order/")({
-  loader: async () => {
-    const cart = await detailedCart();
-    return { cart };
-  },
   head: () => ({
     meta: [
       {
@@ -20,7 +18,13 @@ export const Route = createFileRoute("/order/")({
 });
 
 function RouteComponent() {
-  const { cart } = Route.useLoaderData();
+  const detailedCartFn = useServerFn(detailedCart);
+  const detailedCartQueryOptions = queryOptions({
+    queryKey: ["cart", "detailed"],
+    queryFn: () => detailedCartFn(),
+  });
+  const { data: cart = [] } = useQuery(detailedCartQueryOptions);
+
   return (
     <main className="min-h-screen sm:p-4">
       <div className="container mx-auto p-1 sm:p-3">

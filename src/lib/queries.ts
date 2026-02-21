@@ -51,7 +51,7 @@ export const getProductsForSubcategory = createServerFn()
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
 
     return db.query.products.findMany({
       where: (products, { eq: equal, and: andP }) =>
@@ -61,7 +61,7 @@ export const getProductsForSubcategory = createServerFn()
   });
 
 export const getCollections = createServerFn().handler(async () => {
-  cacheLife("hours");
+  cacheLife("forever");
 
   return db.query.collections.findMany({
     with: {
@@ -76,7 +76,7 @@ export const getProductDetails = createServerFn()
     productSlug,
   }))
   .handler(async ({ data: { productSlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db.query.products.findFirst({
       where: (products, { eq: equal }) => equal(products.slug, productSlug),
     });
@@ -87,7 +87,7 @@ export const getSubcategory = createServerFn()
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db.query.subcategories.findFirst({
       where: (subcategoriesB, { eq: equal }) =>
         equal(subcategoriesB.slug, subcategorySlug),
@@ -99,7 +99,7 @@ export const getCategory = createServerFn()
     categorySlug,
   }))
   .handler(async ({ data: { categorySlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db.query.categories.findFirst({
       where: (categoriesB, { eq: equal }) =>
         equal(categoriesB.slug, categorySlug),
@@ -118,7 +118,7 @@ export const getCollectionDetails = createServerFn()
     collectionSlug,
   }))
   .handler(async ({ data: { collectionSlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db.query.collections.findMany({
       with: {
         categories: true,
@@ -130,7 +130,7 @@ export const getCollectionDetails = createServerFn()
   });
 
 export const getProductCount = createServerFn().handler(async () => {
-  cacheLife("hours");
+  cacheLife("forever");
   return db.select({ count: count() }).from(productsDrizzle);
 });
 
@@ -138,7 +138,7 @@ export const getProductCount = createServerFn().handler(async () => {
 export const getCategoryProductCount = createServerFn()
   .inputValidator((categorySlug: string) => ({ categorySlug }))
   .handler(async ({ data: { categorySlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db
       .select({ count: count() })
       .from(categories)
@@ -160,7 +160,7 @@ export const getCategoryProductCount = createServerFn()
 export const getSubcategoryProductCount = createServerFn()
   .inputValidator((subcategorySlug: string) => ({ subcategorySlug }))
   .handler(async ({ data: { subcategorySlug } }) => {
-    cacheLife("hours");
+    cacheLife("forever");
     return db
       .select({ count: count() })
       .from(productsDrizzle)

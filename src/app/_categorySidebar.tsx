@@ -1,12 +1,14 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { Link } from "@/components/ui/link";
 import { getCollections } from "@/lib/queries";
+import { cacheHeadersFn } from "@/lib/cache";
 
 export const Route = createFileRoute("/_categorySidebar")({
   loader: async () => {
     const allCollections = await getCollections();
     return { allCollections };
   },
+  headers: cacheHeadersFn("forever"),
   component: Layout,
 });
 

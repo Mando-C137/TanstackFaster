@@ -42,16 +42,15 @@ export const Route = createFileRoute(
     return { products, countRes };
   },
   component: Page,
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
   head: async ({ loaderData, params, match: { pathname } }) => {
     if (!loaderData) return {};
 
-    const { subcategory: subcategoryParam } = params;
-    const urlDecodedCategory = decodeURIComponent(subcategoryParam);
+    const urlDecodedSubcategory = decodeURIComponent(params.subcategory);
 
     const [subcategory, rows] = await Promise.all([
-      getSubcategory({ data: { subcategorySlug: urlDecodedCategory } }),
-      getSubcategoryProductCount({ data: urlDecodedCategory }),
+      getSubcategory({ data: { subcategorySlug: urlDecodedSubcategory } }),
+      getSubcategoryProductCount({ data: urlDecodedSubcategory }),
     ]);
 
     if (!subcategory) {

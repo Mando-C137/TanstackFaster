@@ -24,7 +24,7 @@ export const Route = createFileRoute(
 
     return { productData, relatedUnshifted };
   },
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
   head: ({ loaderData, match: { pathname } }) => {
     const product = loaderData?.productData;
     if (!product) {

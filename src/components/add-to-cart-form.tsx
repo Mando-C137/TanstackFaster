@@ -11,6 +11,7 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
       mutationFn: addToCart,
       onSettled: (_1, _2, _3, _4, context) => {
         context.client.invalidateQueries({ queryKey: ["cart"] });
+        context.client.invalidateQueries({ queryKey: ["cart", "detailed"] });
       },
     }),
   );
@@ -18,7 +19,11 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
   return (
     <form
       className="flex flex-col gap-2"
-      onSubmit={() => addToCartFn({ data: productSlug })}
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCartFn({ data: productSlug });
+      }}
     >
       {/* <input type="hidden" name="productSlug" value={productSlug} /> */}
       <button

@@ -16,7 +16,7 @@ export const contentType = "image/png";
 export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/og/",
 )({
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
   server: {
     handlers: {
       GET: async ({ params, request }) => {

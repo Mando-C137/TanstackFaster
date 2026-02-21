@@ -18,7 +18,7 @@ const loader = createServerFn()
 
 export const Route = createFileRoute("/_categorySidebar/$collection/")({
   loader: async ({ params }) => await loader({ data: { params } }),
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
   component: Home,
 });
 

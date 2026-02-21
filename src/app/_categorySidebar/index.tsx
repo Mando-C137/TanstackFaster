@@ -5,7 +5,7 @@ import { cacheHeadersFn, cacheLife } from "@/lib/cache";
 import { getCollections, getProductCount } from "@/lib/queries";
 
 const loader = createServerFn().handler(async () => {
-  cacheLife("hours");
+  cacheLife("forever");
   const [collections, productCount] = await Promise.all([
     getCollections(),
     getProductCount(),
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_categorySidebar/")({
   component: Home,
   pendingComponent: () => <div>Loading...</div>,
   loader: () => loader(),
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
 });
 
 function Home() {

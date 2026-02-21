@@ -20,6 +20,8 @@ export function LoginForm() {
       mutationFn: signIn,
       onSettled: (_1, _2, _3, _4, context) => {
         context.client.invalidateQueries({ queryKey: ["user"] });
+        context.client.invalidateQueries({ queryKey: ["cart"] });
+        context.client.invalidateQueries({ queryKey: ["cart", "detailed"] });
       },
     }),
   );
@@ -32,6 +34,8 @@ export function LoginForm() {
       mutationFn: signUp,
       onSettled: (_1, _2, _3, _4, context) => {
         context.client.invalidateQueries({ queryKey: ["user"] });
+        context.client.invalidateQueries({ queryKey: ["cart"] });
+        context.client.invalidateQueries({ queryKey: ["cart", "detailed"] });
       },
     }),
   );
@@ -129,6 +133,8 @@ export function SignOut(props: { username: string }) {
       mutationFn: signOut,
       onSettled: (_1, _2, _3, _4, context) => {
         context.client.invalidateQueries({ queryKey: ["user"] });
+        context.client.invalidateQueries({ queryKey: ["cart"] });
+        context.client.invalidateQueries({ queryKey: ["cart", "detailed"] });
       },
     }),
   );

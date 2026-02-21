@@ -3,8 +3,10 @@ import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default [
+export default defineConfig([
+  globalIgnores(["dist", ".output", "node_modules"]),
   ...tanstackConfig,
   ...tseslint.configs.recommended,
   ...pluginQuery.configs["flat/recommended"],
@@ -22,7 +24,4 @@ export default [
       // Custom rules can go here
     },
   },
-  {
-    ignores: ["dist", ".output", "node_modules"],
-  },
-];
+]);

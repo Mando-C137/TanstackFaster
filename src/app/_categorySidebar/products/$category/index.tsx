@@ -58,7 +58,7 @@ export const Route = createFileRoute("/_categorySidebar/products/$category/")({
       ],
     };
   },
-  headers: cacheHeadersFn("hours"),
+  headers: cacheHeadersFn("forever"),
 });
 
 // export async function generateStaticParams() {
