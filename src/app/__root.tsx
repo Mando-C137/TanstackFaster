@@ -13,7 +13,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Toaster } from "sonner";
 import appCss from "./globals.css?url";
 import { WelcomeToast } from "./-welcome-toast";
-import { AuthServer } from "./-auth.client";
+import { AuthServer } from "./-auth";
 import type { MouseEvent } from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import { SearchDropdownComponent } from "@/components/search-dropdown";

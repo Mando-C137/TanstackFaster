@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { Suspense } from "react";
-import { PlaceOrderAuth } from "../-auth.client";
+import { PlaceOrderAuth } from "../-auth";
 import { CartItems, TotalCost } from "./-dynamic";
 import { detailedCart } from "@/lib/cart";
 
