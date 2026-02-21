@@ -108,6 +108,7 @@ export const Link = (({ children, ...props }: LinkProps) => {
         }
       }}
       {...props}
+      preload="intent"
     >
       {children}
     </TanstackStartLink>

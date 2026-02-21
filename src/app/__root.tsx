@@ -67,11 +67,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ],
       };
     },
-    component: RootLayout,
+    component: () => (
+      <div className="pt-[85px] sm:pt-[70px]">
+        <Outlet />
+      </div>
+    ),
+    shellComponent: ({ children }) => <RootLayout>{children}</RootLayout>,
   },
 );
 
-function RootLayout() {
+function RootLayout({ children }: React.PropsWithChildren) {
   const params = useParams({ strict: false });
   const subcategoryKey =
     typeof params.subcategory === "string" ? params.subcategory : "root";
@@ -140,9 +145,7 @@ function RootLayout() {
               </div>
             </div>
           </header>
-          <div className="pt-[85px] sm:pt-[70px]">
-            <Outlet />
-          </div>
+          {children}
         </div>
         <footer className="bg-background fixed bottom-0 flex h-12 w-screen flex-col items-center justify-between space-y-2 border-t border-gray-400 px-4 font-sans text-[11px] sm:h-6 sm:flex-row sm:space-y-0">
           <div className="flex flex-wrap justify-center space-x-2 pt-2 sm:justify-start">
