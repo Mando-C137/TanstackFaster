@@ -91,7 +91,7 @@ function RootLayout({ children }: React.PropsWithChildren) {
       >
         <div>
           <header className="border-accent2 bg-background fixed top-0 z-10 flex h-[90px] w-[100vw] flex-grow items-center justify-between border-b-2 p-2 pt-2 pb-[4px] sm:h-[70px] sm:flex-row sm:gap-4 sm:p-4 sm:pt-0 sm:pb-[4px]">
-            <div className="flex flex-grow flex-col">
+            <div className="flex grow flex-col">
               <div className="absolute top-2 right-2 flex justify-end pt-2 font-sans text-sm hover:underline sm:relative sm:top-0 sm:right-0">
                 <Suspense
                   fallback={
