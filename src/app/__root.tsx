@@ -1,4 +1,5 @@
 import {
+  ClientOnly,
   HeadContent,
   Outlet,
   Scripts,
@@ -6,8 +7,8 @@ import {
   useParams,
   useRouter,
 } from "@tanstack/react-router";
-// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
+import { TanStackRouterDevtoolsInProd as TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 // import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import { MenuIcon } from "lucide-react";
@@ -22,6 +23,7 @@ import { SearchDropdownComponent } from "@/components/search-dropdown";
 import { Cart } from "@/components/cart";
 import { Link } from "@/components/ui/link";
 import { getURL } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -80,6 +82,7 @@ function RootLayout({ children }: React.PropsWithChildren) {
   const params = useParams({ strict: false });
   const subcategoryKey =
     typeof params.subcategory === "string" ? params.subcategory : "root";
+  const [showDevtools, setShowDevtools] = useState(false);
 
   return (
     <html lang="en" className="h-full">
@@ -176,9 +179,18 @@ function RootLayout({ children }: React.PropsWithChildren) {
           <WelcomeToast />
         </Suspense>
         <Analytics />
-        {/* <SpeedInsights /> 
-         <ReactQueryDevtools buttonPosition="bottom-left" />
-        <TanStackRouterDevtools position="bottom-right" /> */}
+        <Button
+          onClick={() => setShowDevtools((v) => !v)}
+          className="fixed bottom-20 left-2 z-50 px-2 py-1 text-xs shadow sm:bottom-17"
+        >
+          {showDevtools ? "Hide Devtools" : "Show Devtools"}
+        </Button>
+        {showDevtools && (
+          <ClientOnly>
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+            <TanStackRouterDevtools position="bottom-right" />
+          </ClientOnly>
+        )}
         <Scripts />
       </body>
     </html>
