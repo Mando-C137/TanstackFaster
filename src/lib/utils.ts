@@ -12,3 +12,11 @@ export const getURL = () => {
   const host = import.meta.env.DEV ? "localhost:3000" : env.VITE_VERCEL_URL;
   return `${schema}://${host}`;
 };
+
+export function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}

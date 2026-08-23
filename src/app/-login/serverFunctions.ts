@@ -23,7 +23,7 @@ const authSchema = (formData: FormData) => {
 };
 
 export const signUp = createServerFn({ method: "POST" })
-  .inputValidator(authSchema)
+  .validator(authSchema)
   .handler(async ({ data }) => {
     const { username, password } = data;
     // const ip = getRequestHeader("x-real-ip") ?? "local";
@@ -64,7 +64,7 @@ export const signUp = createServerFn({ method: "POST" })
   });
 
 export const signIn = createServerFn({ method: "POST" })
-  .inputValidator(authSchema)
+  .validator(authSchema)
   .handler(async ({ data }) => {
     const { username, password } = data;
     // const ip = getRequestHeader("x-real-ip") ?? "local";

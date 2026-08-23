@@ -80,7 +80,7 @@ export function ProductLink(props: {
           loading={props.loading}
           decoding="sync"
           src={displayImageSrc}
-          alt={`A small picture of ${product.name}`}
+          alt={product.name}
           width={48}
           height={48}
           className="h-auto w-12 flex-shrink-0 object-cover"

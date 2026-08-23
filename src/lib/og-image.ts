@@ -23,21 +23,22 @@ export async function generateOGImage({
 }: GenerateOGImageOptions): Promise<Response> {
   const fontData = decodeBase64Font();
 
-  const svg = await satori(element, {
-    width,
-    height,
-    fonts: [
-      {
-        name: "Geist",
-        data: fontData,
-        style: "normal",
-        weight: 400,
-      },
-    ],
-  });
-
-  // Dynamic import to avoid bundling issues with native binaries
-  const { default: sharp } = await import("sharp");
+  const [svg, { default: sharp }] = await Promise.all([
+    satori(element, {
+      width,
+      height,
+      fonts: [
+        {
+          name: "Geist",
+          data: fontData,
+          style: "normal",
+          weight: 400,
+        },
+      ],
+    }),
+    // Dynamic import to avoid bundling issues with native binaries
+    import("sharp"),
+  ]);
   const pngBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
 
   return new Response(new Uint8Array(pngBuffer), {

@@ -17,23 +17,16 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
   );
 
   return (
-    <form
-      className="flex flex-col gap-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        addToCartFn({ data: productSlug });
-      }}
-    >
-      {/* <input type="hidden" name="productSlug" value={productSlug} /> */}
+    <div className="flex flex-col gap-2">
       <button
-        type="submit"
+        type="button"
+        onClick={() => addToCartFn({ data: productSlug })}
         className="bg-accent1 max-w-[150px] rounded-[2px] px-5 py-1 text-sm font-semibold text-white"
       >
         Add to cart
       </button>
       {isPending && <p>Adding to cart...</p>}
       {!isPending && data && <p>{data}</p>}
-    </form>
+    </div>
   );
 }

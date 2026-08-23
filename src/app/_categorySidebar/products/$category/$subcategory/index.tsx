@@ -7,7 +7,7 @@ import {
   getSubcategoryProductCount,
 } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
-import { getURL } from "@/lib/utils";
+import { getURL, safeDecodeURIComponent } from "@/lib/utils";
 
 // export async function generateStaticParams() {
 //   const results = await db.query.subcategories.findMany({
@@ -29,7 +29,7 @@ export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/",
 )({
   loader: async ({ params }) => {
-    const urlDecodedSubcategory = decodeURIComponent(params.subcategory);
+    const urlDecodedSubcategory = safeDecodeURIComponent(params.subcategory);
     const [products, countRes] = await Promise.all([
       getProductsForSubcategory({ data: urlDecodedSubcategory }),
       getSubcategoryProductCount({ data: urlDecodedSubcategory }),
@@ -42,11 +42,10 @@ export const Route = createFileRoute(
     return { products, countRes };
   },
   component: Page,
-  headers: cacheHeadersFn("forever"),
   head: async ({ loaderData, params, match: { pathname } }) => {
     if (!loaderData) return {};
 
-    const urlDecodedSubcategory = decodeURIComponent(params.subcategory);
+    const urlDecodedSubcategory = safeDecodeURIComponent(params.subcategory);
 
     const [subcategory, rows] = await Promise.all([
       getSubcategory({ data: { subcategorySlug: urlDecodedSubcategory } }),
@@ -78,6 +77,7 @@ export const Route = createFileRoute(
       ],
     };
   },
+  headers: cacheHeadersFn("forever"),
 });
 
 function Page() {

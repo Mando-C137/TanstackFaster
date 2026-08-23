@@ -23,15 +23,25 @@ export const Route = createFileRoute("/api/prefetch-images/$")({
         }
         const body = await response.text();
         const { document } = parseHTML(body);
-        const images = Array.from(document.querySelectorAll("main img"))
-          .map((img) => ({
+        const images: Array<{
+          srcset: string | null;
+          sizes: string | null;
+          src: string | null;
+          alt: string | null;
+          loading: string | null;
+        }> = [];
+        for (const img of document.querySelectorAll("main img")) {
+          const image = {
             srcset: img.getAttribute("srcset") || img.getAttribute("srcSet"), // Linkedom is case-sensitive
             sizes: img.getAttribute("sizes"),
             src: img.getAttribute("src"),
             alt: img.getAttribute("alt"),
             loading: img.getAttribute("loading"),
-          }))
-          .filter((img) => img.src && img.src != "null");
+          };
+          if (image.src && image.src !== "null") {
+            images.push(image);
+          }
+        }
         return Response.json(
           { images },
           {

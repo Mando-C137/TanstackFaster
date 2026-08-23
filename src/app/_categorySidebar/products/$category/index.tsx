@@ -4,12 +4,12 @@ import { alt, contentType, size } from "./og";
 import { getCategory, getCategoryProductCount } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
 import { Link } from "@/components/ui/link";
-import { getURL } from "@/lib/utils";
+import { getURL, safeDecodeURIComponent } from "@/lib/utils";
 
 const loader = createServerFn()
-  .inputValidator((data) => data as { params: { category: string } })
+  .validator((data) => data as { params: { category: string } })
   .handler(async ({ data: { params } }) => {
-    const urlDecoded = decodeURIComponent(params.category);
+    const urlDecoded = safeDecodeURIComponent(params.category);
     const cat = await getCategory({ data: urlDecoded });
     if (!cat) {
       return null;
@@ -73,47 +73,45 @@ function Page() {
 
   return (
     <div className="container p-4">
-      {finalCount && (
+      {finalCount > 0 && (
         <h1 className="mb-2 border-b-2 text-sm font-bold">
           {finalCount} {finalCount === 1 ? "Product" : "Products"}
         </h1>
       )}
       <div className="space-y-4">
-        {cat.subcollections.map((subcollection, index) => (
-          <div key={index}>
+        {cat.subcollections.map((subcollection) => (
+          <div key={subcollection.id} className="space-y-2">
             <h2 className="mb-2 border-b-2 text-lg font-semibold">
               {subcollection.name}
             </h2>
             <div className="flex flex-row flex-wrap gap-2">
-              {subcollection.subcategories.map(
-                (subcategory, subcategoryIndex) => (
-                  <Link
-                    preload={"intent"}
-                    key={subcategoryIndex}
-                    className="group flex h-full w-full flex-row gap-2 border px-4 py-2 hover:bg-gray-100 sm:w-[200px]"
-                    to={"/products/$category/$subcategory"}
-                    params={{ category, subcategory: subcategory.slug }}
-                  >
-                    <div className="py-2">
-                      <img
-                        loading="eager"
-                        decoding="sync"
-                        src={subcategory.image_url ?? "/placeholder.svg"}
-                        alt={`A small picture of ${subcategory.name}`}
-                        width={48}
-                        height={48}
-                        // quality={65}
-                        className="h-12 w-12 shrink-0 object-cover"
-                      />
+              {subcollection.subcategories.map((subcategory) => (
+                <Link
+                  preload={"intent"}
+                  key={subcategory.slug}
+                  className="group flex h-full w-full flex-row gap-2 border px-4 py-2 hover:bg-gray-100 sm:w-[200px]"
+                  to={"/products/$category/$subcategory"}
+                  params={{ category, subcategory: subcategory.slug }}
+                >
+                  <div className="py-2">
+                    <img
+                      loading="eager"
+                      decoding="sync"
+                      src={subcategory.image_url ?? "/placeholder.svg"}
+                      alt={subcategory.name}
+                      width={48}
+                      height={48}
+                      // quality={65}
+                      className="h-12 w-12 shrink-0 object-cover"
+                    />
+                  </div>
+                  <div className="flex h-16 grow flex-col items-start py-2">
+                    <div className="text-sm font-medium text-gray-700 group-hover:underline">
+                      {subcategory.name}
                     </div>
-                    <div className="flex h-16 grow flex-col items-start py-2">
-                      <div className="text-sm font-medium text-gray-700 group-hover:underline">
-                        {subcategory.name}
-                      </div>
-                    </div>
-                  </Link>
-                ),
-              )}
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         ))}

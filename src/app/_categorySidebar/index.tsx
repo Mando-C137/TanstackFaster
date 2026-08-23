@@ -54,7 +54,7 @@ function Home() {
                       loading={imageIndex < 15 ? "eager" : "lazy"}
                       decoding="sync"
                       src={category.image_url ?? "/placeholder.svg"}
-                      alt={`A small picture of ${category.name}`}
+                      alt={category.name}
                       className="hover:bg-accent2 mb-2 h-14 w-14 border"
                       width={48}
                       height={48}

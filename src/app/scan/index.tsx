@@ -1,13 +1,13 @@
-import { scan } from "react-scan"; // import this BEFORE react
+// import { scan } from "react-scan"; // import this BEFORE react
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@/components/ui/link";
 
-if (typeof window !== "undefined") {
-  scan({
-    enabled: true,
-  });
-}
+// if (typeof window !== "undefined") {
+//   scan({
+//     enabled: true,
+//   });
+// }
 export const Route = createFileRoute("/scan/")({
   component: ScanPage,
 });

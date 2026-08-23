@@ -71,7 +71,7 @@ function CartItem({ product }: { product: CartItem }) {
           </div>
         </div>
         <form action={(formData) => removeFromCart({ data: formData })}>
-          <button type="submit">
+          <button type="submit" aria-label={`Remove ${product.name} from cart`}>
             <input type="hidden" name="productSlug" value={product.slug} />
             <X className="h-6 w-6" />
           </button>

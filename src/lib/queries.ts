@@ -47,7 +47,7 @@ export const getUser = createServerFn().handler(async () => {
 });
 
 export const getProductsForSubcategory = createServerFn()
-  .inputValidator((subcategorySlug: string) => ({
+  .validator((subcategorySlug: string) => ({
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
@@ -72,7 +72,7 @@ export const getCollections = createServerFn().handler(async () => {
 });
 
 export const getProductDetails = createServerFn()
-  .inputValidator((productSlug: string) => ({
+  .validator((productSlug: string) => ({
     productSlug,
   }))
   .handler(async ({ data: { productSlug } }) => {
@@ -83,7 +83,7 @@ export const getProductDetails = createServerFn()
   });
 
 export const getSubcategory = createServerFn()
-  .inputValidator(({ subcategorySlug }: { subcategorySlug: string }) => ({
+  .validator(({ subcategorySlug }: { subcategorySlug: string }) => ({
     subcategorySlug,
   }))
   .handler(async ({ data: { subcategorySlug } }) => {
@@ -95,7 +95,7 @@ export const getSubcategory = createServerFn()
   });
 
 export const getCategory = createServerFn()
-  .inputValidator((categorySlug: string) => ({
+  .validator((categorySlug: string) => ({
     categorySlug,
   }))
   .handler(async ({ data: { categorySlug } }) => {
@@ -114,7 +114,7 @@ export const getCategory = createServerFn()
   });
 
 export const getCollectionDetails = createServerFn()
-  .inputValidator((collectionSlug: string) => ({
+  .validator((collectionSlug: string) => ({
     collectionSlug,
   }))
   .handler(async ({ data: { collectionSlug } }) => {
@@ -136,7 +136,7 @@ export const getProductCount = createServerFn().handler(async () => {
 
 // // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = createServerFn()
-  .inputValidator((categorySlug: string) => ({ categorySlug }))
+  .validator((categorySlug: string) => ({ categorySlug }))
   .handler(async ({ data: { categorySlug } }) => {
     cacheLife("forever");
     return db
@@ -158,7 +158,7 @@ export const getCategoryProductCount = createServerFn()
   });
 
 export const getSubcategoryProductCount = createServerFn()
-  .inputValidator((subcategorySlug: string) => ({ subcategorySlug }))
+  .validator((subcategorySlug: string) => ({ subcategorySlug }))
   .handler(async ({ data: { subcategorySlug } }) => {
     cacheLife("forever");
     return db
@@ -168,7 +168,7 @@ export const getSubcategoryProductCount = createServerFn()
   });
 
 export const getSearchResults = createServerFn()
-  .inputValidator((searchTerm: string) => searchTerm)
+  .validator((searchTerm: string) => searchTerm)
   .handler(async ({ data: searchTerm }) => {
     cacheLife("short");
     let results;

@@ -2,14 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { getCart, updateCart } from "./cart";
 
 export const addToCart = createServerFn({ method: "POST" })
-  .inputValidator((productSlug: string) => {
+  .validator((productSlug: string) => {
     return productSlug;
   })
   .handler(async ({ data: productSlug }) => {
-    const prevCart = await getCart();
     if (typeof productSlug !== "string") {
       return;
     }
+    const prevCart = await getCart();
     const itemAlreadyExists = prevCart.find(
       (item) => item.productSlug === productSlug,
     );
@@ -40,7 +40,7 @@ export const addToCart = createServerFn({ method: "POST" })
   });
 
 export const removeFromCart = createServerFn({ method: "POST" })
-  .inputValidator((formData: FormData) => formData)
+  .validator((formData: FormData) => formData)
   .handler(async ({ data: formData }) => {
     const prevCart = await getCart();
     const productSlug = formData.get("productSlug");

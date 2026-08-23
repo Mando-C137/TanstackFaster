@@ -3,15 +3,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { Link } from "@/components/ui/link";
 import { getCollectionDetails } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
+import { safeDecodeURIComponent } from "@/lib/utils";
 
 // export async function generateStaticParams() {
 //   return await db.collect({ collection: collections.slug }).from(collections);
 // }
 
 const loader = createServerFn()
-  .inputValidator((data) => data as { params: { collection: string } })
+  .validator((data) => data as { params: { collection: string } })
   .handler(async ({ data: { params } }) => {
-    const collectionName = decodeURIComponent(params.collection);
+    const collectionName = safeDecodeURIComponent(params.collection);
     const collections = await getCollectionDetails({ data: collectionName });
     return collections;
   });
@@ -44,7 +45,7 @@ function Home() {
                   loading={imageCount++ < 15 ? "eager" : "lazy"}
                   decoding="sync"
                   src={category.image_url ?? "/placeholder.svg"}
-                  alt={`A small picture of ${category.name}`}
+                  alt={category.name}
                   className="hover:bg-accent2 mb-2 h-14 w-14 border"
                   width={48}
                   height={48}

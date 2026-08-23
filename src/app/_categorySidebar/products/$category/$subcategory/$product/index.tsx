@@ -5,14 +5,14 @@ import { AddToCartForm } from "@/components/add-to-cart-form";
 
 import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
 import { cacheHeadersFn } from "@/lib/cache";
-import { getURL } from "@/lib/utils";
+import { getURL, safeDecodeURIComponent } from "@/lib/utils";
 
 export const Route = createFileRoute(
   "/_categorySidebar/products/$category/$subcategory/$product/",
 )({
   loader: async ({ params }) => {
-    const urlDecodedProduct = decodeURIComponent(params.product);
-    const urlDecodedSubcategory = decodeURIComponent(params.subcategory);
+    const urlDecodedProduct = safeDecodeURIComponent(params.product);
+    const urlDecodedSubcategory = safeDecodeURIComponent(params.subcategory);
     const [productData, relatedUnshifted] = await Promise.all([
       getProductDetails({ data: urlDecodedProduct }),
       getProductsForSubcategory({ data: urlDecodedSubcategory }),
@@ -24,7 +24,6 @@ export const Route = createFileRoute(
 
     return { productData, relatedUnshifted };
   },
-  headers: cacheHeadersFn("forever"),
   head: ({ loaderData, match: { pathname } }) => {
     const product = loaderData?.productData;
     if (!product) {
@@ -48,6 +47,7 @@ export const Route = createFileRoute(
       ],
     };
   },
+  headers: cacheHeadersFn("forever"),
   component: Page,
 });
 
@@ -96,7 +96,7 @@ function Page() {
             loading="eager"
             decoding="sync"
             src={productData.image_url ?? "/placeholder.svg?height=64&width=64"}
-            alt={`A small picture of ${productData.name}`}
+            alt={productData.name}
             height={256}
             // quality={80}
             width={256}

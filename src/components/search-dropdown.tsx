@@ -104,17 +104,21 @@ export function SearchDropdownComponent() {
             <ScrollArea className="h-[300px]">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, index) => (
-                  <Link to={item.href} key={item.slug} preload={"intent"}>
+                  <Link
+                    to={item.href}
+                    key={item.slug}
+                    preload={"intent"}
+                    onClick={() => {
+                      setSearchTerm(item.name);
+                      setIsOpen(false);
+                      inputRef.current?.blur();
+                    }}
+                  >
                     <div
                       className={cn("flex cursor-pointer items-center p-2", {
                         "bg-gray-100": index === highlightedIndex,
                       })}
                       onMouseEnter={() => setHighlightedIndex(index)}
-                      onClick={() => {
-                        setSearchTerm(item.name);
-                        setIsOpen(false);
-                        inputRef.current?.blur();
-                      }}
                     >
                       <img
                         loading="eager"

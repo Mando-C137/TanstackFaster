@@ -10,39 +10,24 @@
 
 import { Route as rootRouteImport } from './app/__root'
 import { Route as CategorySidebarRouteImport } from './app/_categorySidebar'
-import { Route as ScanIndexRouteImport } from './app/scan/index'
-import { Route as OrderIndexRouteImport } from './app/order/index'
-import { Route as OrderHistoryIndexRouteImport } from './app/order-history/index'
 import { Route as CategorySidebarIndexRouteImport } from './app/_categorySidebar/index'
-import { Route as ApiDebugIndexRouteImport } from './app/api/debug/index'
-import { Route as CategorySidebarProductsIndexRouteImport } from './app/_categorySidebar/products/index'
+import { Route as OrderHistoryIndexRouteImport } from './app/order-history/index'
+import { Route as OrderIndexRouteImport } from './app/order/index'
+import { Route as ScanIndexRouteImport } from './app/scan/index'
 import { Route as CategorySidebarCollectionIndexRouteImport } from './app/_categorySidebar/$collection/index'
-import { Route as ApiPrefetchImagesSplatRouteImport } from './app/api/prefetch-images/$'
+import { Route as CategorySidebarProductsIndexRouteImport } from './app/_categorySidebar/products/index'
 import { Route as CategorySidebarProductsCategoryRouteRouteImport } from './app/_categorySidebar/products/$category/route'
+import { Route as ApiDebugIndexRouteImport } from './app/api/debug/index'
+import { Route as ApiPrefetchImagesSplatRouteImport } from './app/api/prefetch-images/$'
 import { Route as CategorySidebarProductsCategoryIndexRouteImport } from './app/_categorySidebar/products/$category/index'
 import { Route as CategorySidebarProductsCategoryOgRouteImport } from './app/_categorySidebar/products/$category/og'
 import { Route as CategorySidebarProductsCategorySubcategoryIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/index'
-import { Route as CategorySidebarProductsCategorySubcategoryOgIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/og/index'
 import { Route as CategorySidebarProductsCategorySubcategoryProductIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/$product/index'
+import { Route as CategorySidebarProductsCategorySubcategoryOgIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/og/index'
 import { Route as CategorySidebarProductsCategorySubcategoryProductOgIndexRouteImport } from './app/_categorySidebar/products/$category/$subcategory/$product/og/index'
 
 const CategorySidebarRoute = CategorySidebarRouteImport.update({
   id: '/_categorySidebar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScanIndexRoute = ScanIndexRouteImport.update({
-  id: '/scan/',
-  path: '/scan/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrderIndexRoute = OrderIndexRouteImport.update({
-  id: '/order/',
-  path: '/order/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrderHistoryIndexRoute = OrderHistoryIndexRouteImport.update({
-  id: '/order-history/',
-  path: '/order-history/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategorySidebarIndexRoute = CategorySidebarIndexRouteImport.update({
@@ -50,34 +35,49 @@ const CategorySidebarIndexRoute = CategorySidebarIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CategorySidebarRoute,
 } as any)
-const ApiDebugIndexRoute = ApiDebugIndexRouteImport.update({
-  id: '/api/debug/',
-  path: '/api/debug/',
+const OrderHistoryIndexRoute = OrderHistoryIndexRouteImport.update({
+  id: '/order-history/',
+  path: '/order-history/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CategorySidebarProductsIndexRoute =
-  CategorySidebarProductsIndexRouteImport.update({
-    id: '/products/',
-    path: '/products/',
-    getParentRoute: () => CategorySidebarRoute,
-  } as any)
+const OrderIndexRoute = OrderIndexRouteImport.update({
+  id: '/order/',
+  path: '/order/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScanIndexRoute = ScanIndexRouteImport.update({
+  id: '/scan/',
+  path: '/scan/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySidebarCollectionIndexRoute =
   CategorySidebarCollectionIndexRouteImport.update({
     id: '/$collection/',
     path: '/$collection/',
     getParentRoute: () => CategorySidebarRoute,
   } as any)
-const ApiPrefetchImagesSplatRoute = ApiPrefetchImagesSplatRouteImport.update({
-  id: '/api/prefetch-images/$',
-  path: '/api/prefetch-images/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const CategorySidebarProductsIndexRoute =
+  CategorySidebarProductsIndexRouteImport.update({
+    id: '/products/',
+    path: '/products/',
+    getParentRoute: () => CategorySidebarRoute,
+  } as any)
 const CategorySidebarProductsCategoryRouteRoute =
   CategorySidebarProductsCategoryRouteRouteImport.update({
     id: '/products/$category',
     path: '/products/$category',
     getParentRoute: () => CategorySidebarRoute,
   } as any)
+const ApiDebugIndexRoute = ApiDebugIndexRouteImport.update({
+  id: '/api/debug/',
+  path: '/api/debug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPrefetchImagesSplatRoute = ApiPrefetchImagesSplatRouteImport.update({
+  id: '/api/prefetch-images/$',
+  path: '/api/prefetch-images/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySidebarProductsCategoryIndexRoute =
   CategorySidebarProductsCategoryIndexRouteImport.update({
     id: '/',
@@ -96,16 +96,16 @@ const CategorySidebarProductsCategorySubcategoryIndexRoute =
     path: '/$subcategory/',
     getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
   } as any)
-const CategorySidebarProductsCategorySubcategoryOgIndexRoute =
-  CategorySidebarProductsCategorySubcategoryOgIndexRouteImport.update({
-    id: '/$subcategory/og/',
-    path: '/$subcategory/og/',
-    getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
-  } as any)
 const CategorySidebarProductsCategorySubcategoryProductIndexRoute =
   CategorySidebarProductsCategorySubcategoryProductIndexRouteImport.update({
     id: '/$subcategory/$product/',
     path: '/$subcategory/$product/',
+    getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
+  } as any)
+const CategorySidebarProductsCategorySubcategoryOgIndexRoute =
+  CategorySidebarProductsCategorySubcategoryOgIndexRouteImport.update({
+    id: '/$subcategory/og/',
+    path: '/$subcategory/og/',
     getParentRoute: () => CategorySidebarProductsCategoryRouteRoute,
   } as any)
 const CategorySidebarProductsCategorySubcategoryProductOgIndexRoute =
@@ -239,11 +239,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySidebarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/scan/': {
-      id: '/scan/'
-      path: '/scan'
-      fullPath: '/scan/'
-      preLoaderRoute: typeof ScanIndexRouteImport
+    '/_categorySidebar/': {
+      id: '/_categorySidebar/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof CategorySidebarIndexRouteImport
+      parentRoute: typeof CategorySidebarRoute
+    }
+    '/order-history/': {
+      id: '/order-history/'
+      path: '/order-history'
+      fullPath: '/order-history/'
+      preLoaderRoute: typeof OrderHistoryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/order/': {
@@ -253,18 +260,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/order-history/': {
-      id: '/order-history/'
-      path: '/order-history'
-      fullPath: '/order-history/'
-      preLoaderRoute: typeof OrderHistoryIndexRouteImport
+    '/scan/': {
+      id: '/scan/'
+      path: '/scan'
+      fullPath: '/scan/'
+      preLoaderRoute: typeof ScanIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_categorySidebar/': {
-      id: '/_categorySidebar/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof CategorySidebarIndexRouteImport
+    '/_categorySidebar/$collection/': {
+      id: '/_categorySidebar/$collection/'
+      path: '/$collection'
+      fullPath: '/$collection/'
+      preLoaderRoute: typeof CategorySidebarCollectionIndexRouteImport
+      parentRoute: typeof CategorySidebarRoute
+    }
+    '/_categorySidebar/products/': {
+      id: '/_categorySidebar/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof CategorySidebarProductsIndexRouteImport
+      parentRoute: typeof CategorySidebarRoute
+    }
+    '/_categorySidebar/products/$category': {
+      id: '/_categorySidebar/products/$category'
+      path: '/products/$category'
+      fullPath: '/products/$category'
+      preLoaderRoute: typeof CategorySidebarProductsCategoryRouteRouteImport
       parentRoute: typeof CategorySidebarRoute
     }
     '/api/debug/': {
@@ -274,33 +295,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDebugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_categorySidebar/products/': {
-      id: '/_categorySidebar/products/'
-      path: '/products'
-      fullPath: '/products/'
-      preLoaderRoute: typeof CategorySidebarProductsIndexRouteImport
-      parentRoute: typeof CategorySidebarRoute
-    }
-    '/_categorySidebar/$collection/': {
-      id: '/_categorySidebar/$collection/'
-      path: '/$collection'
-      fullPath: '/$collection/'
-      preLoaderRoute: typeof CategorySidebarCollectionIndexRouteImport
-      parentRoute: typeof CategorySidebarRoute
-    }
     '/api/prefetch-images/$': {
       id: '/api/prefetch-images/$'
       path: '/api/prefetch-images/$'
       fullPath: '/api/prefetch-images/$'
       preLoaderRoute: typeof ApiPrefetchImagesSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_categorySidebar/products/$category': {
-      id: '/_categorySidebar/products/$category'
-      path: '/products/$category'
-      fullPath: '/products/$category'
-      preLoaderRoute: typeof CategorySidebarProductsCategoryRouteRouteImport
-      parentRoute: typeof CategorySidebarRoute
     }
     '/_categorySidebar/products/$category/': {
       id: '/_categorySidebar/products/$category/'
@@ -323,18 +323,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySidebarProductsCategorySubcategoryIndexRouteImport
       parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
     }
-    '/_categorySidebar/products/$category/$subcategory/og/': {
-      id: '/_categorySidebar/products/$category/$subcategory/og/'
-      path: '/$subcategory/og'
-      fullPath: '/products/$category/$subcategory/og/'
-      preLoaderRoute: typeof CategorySidebarProductsCategorySubcategoryOgIndexRouteImport
-      parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
-    }
     '/_categorySidebar/products/$category/$subcategory/$product/': {
       id: '/_categorySidebar/products/$category/$subcategory/$product/'
       path: '/$subcategory/$product'
       fullPath: '/products/$category/$subcategory/$product/'
       preLoaderRoute: typeof CategorySidebarProductsCategorySubcategoryProductIndexRouteImport
+      parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
+    }
+    '/_categorySidebar/products/$category/$subcategory/og/': {
+      id: '/_categorySidebar/products/$category/$subcategory/og/'
+      path: '/$subcategory/og'
+      fullPath: '/products/$category/$subcategory/og/'
+      preLoaderRoute: typeof CategorySidebarProductsCategorySubcategoryOgIndexRouteImport
       parentRoute: typeof CategorySidebarProductsCategoryRouteRoute
     }
     '/_categorySidebar/products/$category/$subcategory/$product/og/': {

@@ -13,7 +13,7 @@ const cartSchema = z.array(
 export type CartItem = z.infer<typeof cartSchema>[number];
 
 export const updateCart = createServerFn()
-  .inputValidator((a: Array<CartItem>) => a)
+  .validator((a: Array<CartItem>) => a)
   .handler(({ data }) => {
     setCookie("cart", JSON.stringify(data), {
       httpOnly: true,

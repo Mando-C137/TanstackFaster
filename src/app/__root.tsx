@@ -88,6 +88,10 @@ function RootLayout({ children }: React.PropsWithChildren) {
     <html lang="en" className="h-full">
       <head>
         <HeadContent />
+      {/* <script
+      crossOrigin="anonymous"
+      src="//unpkg.com/react-scan/dist/auto.global.js"
+      ></script> */}
       </head>
       <body
         className={`flex flex-col overflow-x-hidden overflow-y-auto antialiased`}
